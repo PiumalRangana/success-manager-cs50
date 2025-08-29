@@ -43,3 +43,7 @@ footer {
 a{
     text-decoration: none;
 }
+
+.card-bg{
+    background-color: rgb(63, 64, 65);
+}
