@@ -1,49 +1,22 @@
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     background: #f5f5f5;
 }
 
-header {
-    background: #333;
-    color: #fff;
-    padding: 1rem;
+.siteHeader {
+    padding: 0;
 }
 
-nav a {
-    color: #fff;
-    margin-right: 1rem;
-    text-decoration: none;
+.btn-outline-light {
+    border: none;
 }
 
-nav a:hover {
-    text-decoration: underline;
-}
-
-main {
-    padding: 2rem;
-    background: white;
-    max-width: 800px;
-    margin: 2rem auto;
-    border-radius: 8px;
+.card-bg {
+    background-color: rgb(63, 64, 65);
 }
 
 footer {
-    text-align: center;
-    padding: 1rem;
     font-size: 0.9rem;
-    color: #666;
-}
-.siteHeader{
-    padding: 0;
-}
-.btn-outline-light{
-    border: none;
-}
-a{
-    text-decoration: none;
-}
-
-.card-bg{
-    background-color: rgb(63, 64, 65);
 }

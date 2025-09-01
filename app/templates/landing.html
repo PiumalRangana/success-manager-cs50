@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100 bg-dark">
     <!-- ================= Navbar ================= -->
     <header class="siteHeader">
         <!-- Navigation -->
@@ -52,79 +52,99 @@
         </nav>
     </header>
 
-    <!-- ================= Hero Section ================= -->
-    <section class="py-5 text-center bg-dark text-light">
-        <div class="container">
-            <h1 class="display-4 fw-bold">Take Control of<br>Your Time & Tasks</h1>
-            <p class="lead mb-4">
-                Track your work, manage your schedule, and boost productivity with powerful charts &amp; timers.
-            </p>
-            <div class="d-flex flex-row justify-content-center gap-3">
+    
+    <main>
+        <!-- ================= Hero Section ================= -->
+        <section class="py-5 text-center bg-dark text-light">
+            <div class="container">
+                <h1 class="display-4 fw-bold">Take Control of<br>Your Time & Tasks</h1>
+                <p class="lead mb-4">
+                    Track your work, manage your schedule, and boost productivity with powerful charts &amp; timers.
+                </p>
+                <div class="d-flex flex-row justify-content-center gap-3">
+                    <a href="#" class="btn btn-primary btn-lg px-4">Register now</a>
+                    <a href="#" class="btn btn-secondary btn-lg px-4">Log in</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= Features Section ================= -->
+        <section class="py-3 bg-dark text-light">
+            <div class="container">
+                <div class="row g-4 justify-content-center">
+
+                    <!-- Card 1 -->
+                    <div class="col-md-4">
+                        <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
+                            <div class="mb-3 fs-1">
+                                <i class="bi bi-stopwatch"></i>
+                            </div>
+                            <h5 class="fw-bold">Smart Timers</h5>
+                            <p class="mb-0">Start, pause; and track time effortlessly</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="col-md-4">
+                        <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
+                            <div class="mb-3 fs-1">
+                                <i class="bi bi-bar-chart-fill"></i>
+                            </div>
+                            <h5 class="fw-bold">Visual Progress</h5>
+                            <p class="mb-0">Beautiful charts to show your work patterns</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="col-md-4">
+                        <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
+                            <div class="mb-3 fs-1">
+                                <i class="bi bi-check2-square"></i>
+                            </div>
+                            <h5 class="fw-bold">Flexible Task Management</h5>
+                            <p class="mb-0">Add, organize, and prioritize tasks</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= Why It's Useful Section ================= -->
+        <section class="py-5 bg-dark text-light text-center">
+            <div class="container">
+                <h2 class="fw-bold mb-4">Why it's useful</h2>
+                <p class="lead mb-5">
+                    Whether you're a student, freelancer, or entrepreneur, Success Manager keeps you
+                    accountable and helps you achieve more with less stress.
+                </p>
+                <h4 class="fw-semibold mb-4">Ready to start managing your success?</h4>
                 <a href="#" class="btn btn-primary btn-lg px-4">Register now</a>
-                <a href="#" class="btn btn-secondary btn-lg px-4">Log in</a>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <!-- ================= Features Section ================= -->
-    <section class="py-3 bg-dark text-light">
+    <!-- ================= Footer ================= -->
+    <footer class="py-4 bg-dark text-light text-center border-top mt-auto">
         <div class="container">
-            <div class="row g-4 justify-content-center">
-
-                <!-- Card 1 -->
-                <div class="col-md-4">
-                    <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
-                        <div class="mb-3 fs-1">
-                            <i class="bi bi-stopwatch"></i>
-                        </div>
-                        <h5 class="fw-bold">Smart Timers</h5>
-                        <p class="mb-0">Start, pause; and track time effortlessly</p>
-                    </div>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="col-md-4">
-                    <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
-                        <div class="mb-3 fs-1">
-                            <i class="bi bi-bar-chart-fill"></i>
-                        </div>
-                        <h5 class="fw-bold">Visual Progress</h5>
-                        <p class="mb-0">Beautiful charts to show your work patterns</p>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="col-md-4">
-                    <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
-                        <div class="mb-3 fs-1">
-                            <i class="bi bi-check2-square"></i>
-                        </div>
-                        <h5 class="fw-bold">Flexible Task Management</h5>
-                        <p class="mb-0">Add, organize, and prioritize tasks</p>
-                    </div>
-                </div>
-
-            </div>
+            <ul class="list-inline mb-2">
+                <li class="list-inline-item"><a href="#" class="text-decoration-none text-light">About</a></li>
+                <li class="list-inline-item"><a href="#" class="text-decoration-none text-light">Contact</a></li>
+                <li class="list-inline-item">
+                    <a href="#" class="text-decoration-none text-light">
+                        <i class="bi bi-github"></i> Github
+                    </a>
+                </li>
+            </ul>
+            <p class="small mb-0">&copy; 2025 Success Manager. All rights reserved.</p>
         </div>
-    </section>
+    </footer>
 
-    <!-- ================= Why It's Useful Section ================= -->
-    <section class="py-5 bg-dark text-light text-center">
-        <div class="container">
-            <h2 class="fw-bold mb-4">Why it's useful</h2>
-            <p class="lead mb-5">
-                Whether you're a student, freelancer, or entrepreneur, Success Manager keeps you 
-                accountable and helps you achieve more with less stress.
-            </p>
-            <h4 class="fw-semibold mb-4">Ready to start managing your success?</h4>
-            <a href="#" class="btn btn-primary btn-lg px-4">Register now</a>
-        </div>
-    </section>
 </body>
 
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous">
-</script>
+    </script>
 
 </html>
