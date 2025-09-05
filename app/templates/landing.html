@@ -27,7 +27,7 @@
             <div class="container-fluid">
 
                 <!-- Brand -->
-                <a class="navbar-brand text-decoration-none px-2" href="#">
+                <a class="navbar-brand text-decoration-none px-2" href="/">
                     <i class="bi bi-check-circle-fill p-1" aria-hidden="true"></i>
                     Success Manager
                 </a>
@@ -42,9 +42,11 @@
                     <div class="ms-md-auto">
                         <div
                             class="d-flex flex-column flex-md-row justify-content-center justify-content-md-end align-items-center gap-2">
-                            <a class="btn btn-outline-light w-100 w-lg-auto px-4 text-decoration-none" href="#">Log
+                            <a class="btn btn-outline-light w-100 w-lg-auto px-4 text-decoration-none"
+                                href="{{ url_for('main.login') }}">Log
                                 in</a>
-                            <a class="btn btn-primary w-100 w-lg-auto px-4 text-decoration-none" href="#">Register</a>
+                            <a class="btn btn-primary w-100 w-lg-auto px-4 text-decoration-none"
+                                href="{{ url_for('main.register') }}">Register</a>
                         </div>
                     </div>
                 </div>
@@ -52,7 +54,7 @@
         </nav>
     </header>
 
-    
+
     <main>
         <!-- ================= Hero Section ================= -->
         <section class="py-5 text-center bg-dark text-light">
@@ -62,8 +64,8 @@
                     Track your work, manage your schedule, and boost productivity with powerful charts &amp; timers.
                 </p>
                 <div class="d-flex flex-row justify-content-center gap-3">
-                    <a href="#" class="btn btn-primary btn-lg px-4">Register now</a>
-                    <a href="#" class="btn btn-secondary btn-lg px-4">Log in</a>
+                    <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg px-4">Register now</a>
+                    <a href="{{ url_for('main.login') }}" class="btn btn-secondary btn-lg px-4">Log in</a>
                 </div>
             </div>
         </section>
@@ -119,7 +121,7 @@
                     accountable and helps you achieve more with less stress.
                 </p>
                 <h4 class="fw-semibold mb-4">Ready to start managing your success?</h4>
-                <a href="#" class="btn btn-primary btn-lg px-4">Register now</a>
+                <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg px-4">Register now</a>
             </div>
         </section>
     </main>
@@ -128,11 +130,22 @@
     <footer class="py-4 bg-dark text-light text-center border-top mt-auto">
         <div class="container">
             <ul class="list-inline mb-2">
-                <li class="list-inline-item"><a href="#" class="text-decoration-none text-light">About</a></li>
-                <li class="list-inline-item"><a href="#" class="text-decoration-none text-light">Contact</a></li>
+                <li class="list-inline-item"><a href="{{ url_for('main.about') }}"
+                        class="text-decoration-none text-light">About</a></li>
+                <li class="list-inline-item"><a href="{{ url_for('main.contact') }}"
+                        class="text-decoration-none text-light">Contact</a></li>
                 <li class="list-inline-item">
-                    <a href="#" class="text-decoration-none text-light">
+                    <a href="https://github.com/PiumalRangana" 
+                        target="_blank"
+                        class="text-decoration-none text-light">
                         <i class="bi bi-github"></i> Github
+                    </a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="https://www.linkedin.com/in/piumal-rangana"
+                        target="_blank"
+                        class="text-decoration-none text-light">
+                        <i class="bi bi-linkedin"></i> LinkedIn
                     </a>
                 </li>
             </ul>
