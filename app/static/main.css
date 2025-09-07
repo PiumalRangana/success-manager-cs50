@@ -20,3 +20,11 @@ body {
 footer {
     font-size: 0.9rem;
 }
+.form-control{
+    background-color: rgb(49, 49, 49);
+    color:#b8b8b8
+}
+
+.form-control::placeholder{
+    color: rgb(131, 131, 131);
+}
