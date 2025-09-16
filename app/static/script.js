@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // When the eye icon is clicked, toggle between "password" and "text" type
     togglePassword.addEventListener("click", () => {
-        const type = passwordInput.type === "password" ? "text" : "password"; 
+        const type = passwordInput.type === "password" ? "text" : "password";
         passwordInput.type = type;
 
         // Switch the icon between "eye" and "eye-slash"
@@ -28,5 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
         // Switch the icon between "eye" and "eye-slash"
         toggleConfirmPassword.classList.toggle("bi-eye");
         toggleConfirmPassword.classList.toggle("bi-eye-slash");
+    });
+    // ================= Confirm password Validation =================
+    const registerForm = document.getElementById("registerForm");
+    const errorField = document.getElementById("errorField")
+        registerForm.addEventListener("submit", (e) => {
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            e.preventDefault(); // stop form from submitting
+            errorField.textContent = "Passwords do not match!";
+            confirmPasswordInput.focus();
+        }
     });
 });
