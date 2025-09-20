@@ -46,7 +46,7 @@
                                 href="{{ url_for('main.login') }}">Log
                                 in</a>
                             <a class="btn btn-primary w-100 w-lg-auto px-4 text-decoration-none"
-                                href="{{ url_for('main.register') }}">Register</a>
+                                href="{{ url_for('auth.register') }}">Register</a>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                     Track your work, manage your schedule, and boost productivity with powerful charts &amp; timers.
                 </p>
                 <div class="d-flex flex-row justify-content-center gap-3">
-                    <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg px-4">Register now</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4">Register now</a>
                     <a href="{{ url_for('main.login') }}" class="btn btn-secondary btn-lg px-4">Log in</a>
                 </div>
             </div>
@@ -121,7 +121,7 @@
                     accountable and helps you achieve more with less stress.
                 </p>
                 <h4 class="fw-semibold mb-4">Ready to start managing your success?</h4>
-                <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg px-4">Register now</a>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4">Register now</a>
             </div>
         </section>
     </main>

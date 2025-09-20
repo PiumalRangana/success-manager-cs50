@@ -47,23 +47,34 @@
         <section class="bg-dark text-light">
             <div class="container d-flex justify-content-center">
                 <div class="col-lg-4 col-md-10 col-sm-8 col-12">
-                    <form  id="registerForm">
+                    {% if errors %}
+                    <div class="alert alert-danger">
+                        <ul>
+                            {% for error in errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    <form method="post" action="{{ url_for('auth.register') }}" id="registerForm">
                         <!-- Name Field -->
                         <div class="mb-4 text-start">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control rounded-3 border-0" id="name" placeholder="Name" required>
+                            <input type="text" class="form-control rounded-3 border-0" name="name" value="{{ name or '' }}" id="name"
+                                placeholder="Name" required>
                         </div>
 
                         <div class="mb-4 text-start">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control rounded-3 border-0" id="email" placeholder="Email"required>
+                            <input type="email" class="form-control rounded-3 border-0" name="email" value="{{ email or '' }}" id="email"
+                                placeholder="Email" required>
                         </div>
 
                         <div class="mb-4 text-start">
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
-                                <input type="password" class="form-control rounded-start-3 border-0" 
-                                    id="password" placeholder="Password" required minlength="8">
+                                <input type="password" class="form-control rounded-start-3 border-0" id="password"
+                                    name="password" placeholder="Password" required minlength="8">
                                 <span class="input-group-text bg-white border-0 rounded-end-3">
                                     <i class="bi bi-eye" id="togglePassword" style="cursor:pointer;"></i>
                                 </span>
@@ -74,7 +85,8 @@
                             <label for="confirm_password" class="form-label">Confirm password</label>
                             <div class="input-group">
                                 <input type="password" class="form-control rounded-start-3 border-0"
-                                    id="confirm_password" placeholder="Confirm password" required minlength="8">
+                                    id="confirm_password" name="confirm_password" placeholder="Confirm password"
+                                    required minlength="8">
                                 <span class="input-group-text bg-white border-0 rounded-end-3">
                                     <i class="bi bi-eye" id="toggleConfirmPassword" style="cursor:pointer;"></i>
                                 </span>
