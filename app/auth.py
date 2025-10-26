@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 from  .models import User
 from . import db
 
@@ -34,16 +34,12 @@ def register():
 
         # ===== Handle errors =====
         if errors:
-            for err in errors:
-                print("=== Registration Error ===")
-                print(err)
             return render_template("register.html", errors=errors, name=name, email=email)
 
 
         # If everything is valid
         # hash password
         password_hash = generate_password_hash(password)
-        check_password_hash(password_hash, password)
         
         # create user
         new_user = User(name=name, email=email, password_hash=password_hash)
