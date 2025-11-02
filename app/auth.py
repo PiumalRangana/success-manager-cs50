@@ -24,11 +24,16 @@ def register():
         if "@" not in email or "." not in email:
             errors.append("Invalid email address.")
 
-        # 3. Password length
+        # 3. Email uniqueness
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            errors.append("Email is already registered.")
+
+        # 4. Password length
         if len(password) < 8:
             errors.append("Password must be at least 8 characters long.")
 
-        # 4. Password confirmation
+        # 5. Password confirmation
         if password != confirm_password:
             errors.append("Passwords do not match.")
 
