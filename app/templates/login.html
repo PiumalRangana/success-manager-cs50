@@ -1,1 +1,69 @@
-<h1>Login</h1>
+{% extends "layout.html" %}
+{% block title %}Login | Success Manager{% endblock %}
+
+{% block content %}
+    <header>
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="container-fluid">
+
+                <!-- Brand -->
+                <a class="navbar-brand text-decoration-none px-2" href="/">
+                    <i class="bi bi-check-circle-fill p-1" aria-hidden="true"></i>
+                    Success Manager
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="border-1">
+        <!-- ================= Hero Section ================= -->
+        <section class="py-3 text-center bg-dark text-light">
+            <div class="container">
+                <h1 class="display-4 fw-bold">Log In</h1>
+            </div>
+        </section>
+
+        <!--========Error field=========-->
+        <section class="bg-dark text-light">
+            <div class="container d-flex justify-content-center">
+                <div class="col-lg-4 col-md-10 col-sm-8 col-12">
+                    {% if errors %}
+                    <div class="alert alert-danger">
+                        <ul>
+                            {% for error in errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <!-- ================= Login Form Section ================= -->
+                    <form method="post" action="{{ url_for('auth.login') }}" id="loggingForm">
+                        <!-- Email Field -->
+                        <div class="mb-4 text-start">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control rounded-3 border-0" name="email"
+                                value="{{ email or '' }}" id="email" placeholder="Email" required>
+                        </div>
+                        <!-- Password Field -->
+                        <div class="mb-4 text-start">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control rounded-start-3 border-0" id="password"
+                                    name="password" placeholder="Password" required minlength="8">
+                                <span class="input-group-text bg-white border-0 rounded-end-3">
+                                    <i class="bi bi-eye" id="togglePassword" style="cursor:pointer;"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mb-4">
+                            <button type="submit" class="btn btn-primary rounded-3">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}
