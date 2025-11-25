@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, session
+from flask import Blueprint, render_template, request, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, logout_user
 from  .models import User
 from . import db
 
@@ -94,10 +95,19 @@ def login():
         if errors:
             return render_template("login.html", errors=errors, email=email)
         
-        #======= create session =====
-        session["user_id"] = existing_user.id
-        session["user_name"] = existing_user.name
-        
-        return redirect('/home')
+        # Log the user in using Flask-Login
+        login_user(existing_user)
+
+        # Respect `next` param if present
+        next_page = request.args.get('next')
+        if next_page:
+            return redirect(next_page)
+
+        return redirect(url_for('main.home'))
 
     return render_template("login.html")
+
+@auth.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('main.login'))

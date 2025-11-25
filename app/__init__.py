@@ -2,8 +2,10 @@ import os
 from dotenv import load_dotenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 db = SQLAlchemy()
+login_manager = LoginManager()
 load_dotenv()
 
 def create_app():
@@ -22,5 +24,17 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+
+    # Initialize Flask-Login
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        from .models import User
+        try:
+            return User.query.get(int(user_id))
+        except Exception:
+            return None
 
     return app

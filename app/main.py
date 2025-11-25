@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, session, redirect, url_for
-from .models import User
+from flask import Blueprint, render_template, redirect, url_for
+from flask_login import login_required, current_user
 
 main = Blueprint('main', __name__)
 
@@ -19,12 +19,8 @@ def contact():
 def login():
     return render_template("login.html")
 
+@login_required
 @main.route('/home')
 def home():
-    user_id = session.get('user_id')
-    userName = session.get('user_name')
-    if not user_id:
-        return redirect(url_for('auth.login'))
-    
-    user = {'user_id': user_id, 'user_name': userName}  
+    user = {'user_id': current_user.id, 'user_name': current_user.name}
     return render_template('index.html', user=user)
