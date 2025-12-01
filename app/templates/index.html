@@ -3,10 +3,54 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div style="color: white;">
-    <h1>Welcome to Success Manager </h1>
-    <p>This is your productivity hub. Get started by logging in or registering.</p>
-    <h2>your id, {{ user.user_id }}!</h2>
-    <p>Your name: {{ user.user_name }}</p>
-</div>
-{% endblock %}
+    <div class="d-flex flex-column min-vh-100 bg-dark">
+        <!-- ================= Navbar ================= -->
+        <header class="siteHeader">
+            <!-- Navigation --> 
+            <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+                <div class="container-fluid">
+
+                    <!-- Brand -->
+                    <a class="navbar-brand text-decoration-none px-2" href="/">
+                        <i class="bi bi-check-circle-fill p-1" aria-hidden="true"></i>
+                        Success Manager
+                    </a>
+                    <!--Toggle button-->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <!-- Right side buttons -->
+                        <div class="ms-md-auto">
+                            <div
+                                class="d-flex flex-column flex-md-row justify-content-center justify-content-md-end align-items-center gap-2">
+                                <a class="btn btn-outline-light w-100 w-lg-auto px-4 text-decoration-none"
+                                    href="{{ url_for('auth.logout') }}">Log
+                                    out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <!-- ================= Main ================= -->
+         <form action="/home" method="post" class="container my-5">
+            <div class="form-group mb-4 text-start text-light">
+                <label for="task" class="form-label">New Task:</label>
+                <input type="text" name="task_txt" id="task_txt" placeholder="Enter a new task" class="form-control rounded-3 border-0" required>
+            </div>
+            <div class="form-group mb-4 text-start">
+                <label for="is_daily" class="form-chek-lable text-light">Daily task:</label>
+                <input type="checkbox" class="form-check-input" id="is_daily" name="is_daily">
+            </div>
+            <div class="form-group mb-4 text-start">
+                <label for="tsk_color" class="text-light">selct a coror :</label>
+                <input type="color" id="tsk_color" name="tsk_color">
+            </div>
+            <div class="d-grid mb-4">
+                <button class="btn btn-primary rounded-3" type="submit">Add Task</button>
+            </div>
+         </form>
+    {% endblock %}
