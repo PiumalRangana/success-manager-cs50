@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from app.helpers import task_text_color
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -36,5 +37,5 @@ def create_app():
             return User.query.get(int(user_id))
         except Exception:
             return None
-
+    app.jinja_env.globals.update(task_text_color=task_text_color)
     return app

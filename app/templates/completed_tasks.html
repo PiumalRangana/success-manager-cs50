@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Completed Tasks{% endblock %}
 
 {% block content %}
 <header class="siteHeader">
@@ -26,7 +26,7 @@
                     <div
                         class="d-flex flex-column flex-md-row justify-content-center justify-content-md-end align-items-center gap-2">
 
-                        <!--HOME BUTTON-->
+                        <!--Home link-->
                         <a class="btn btn-outline-light w-100 w-lg-auto text-decoration-none"
                             href="{{ url_for('main.home') }}">Home</a>
 
@@ -48,13 +48,14 @@
         </div>
     </nav>
 </header>
+
 <!-- ================= Main ================= -->
-<!--Tasks list-->
+
 <div class="container">
     <div class="row">
         <div class="col my-5">
             <div>
-                <h2 class="text-light">Your Tasks</h2>
+                <h2 class="text-light">Completed Tasks</h2>
 
                 <!--Add task butto, Cros Icon-->
                 <a class="btn btn-outline-light text-decoration-none float-end" href="{{ url_for('main.add_task') }}">
@@ -63,14 +64,14 @@
 
             </div>
             <ul class="list-group my-5">
-                {% for task in tasks %}
+                {% for task in completed_tasks %}
                 <li class="list-group-item"
                     style="color: {{task_text_color(task.color)}}; background-color: {{task.color}};">
                     {{task.task_text}}
 
                     <!--complete button-->
                     <div class="btn-group float-end">
-                        <form action="{{ url_for('main.complete_task', task_id=task.id) }}" method="post"
+                      <form action="{{ url_for('main.completed_tasks_undo', task_id=task.id) }}" method="post"
                             style="display:inline;">
                             <button type="submit" style="background-color: transparent;
                                  color: {{ task_text_color(task.color) }};
@@ -79,7 +80,6 @@
                                 <i class="bi bi-check2-square"></i>
                             </button>
                         </form>
-
                         <!--Edit button-->
                         <a href="/edit_task/{{task.id}}" type="button" style="background-color: transparent; 
                             color: {{task_text_color(task.color)}};

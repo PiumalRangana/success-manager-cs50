@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block title %}Home{% endblock %}
+{% block content %}
+<header class="siteHeader">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container-fluid">
+
+            <!-- Brand -->
+            <a class="navbar-brand text-decoration-none px-2" href="/">
+                <i class="bi bi-check-circle-fill p-1" aria-hidden="true"></i>
+                Success Manager
+            </a>
+            <!--Toggle button-->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Right side buttons -->
+                <div class="ms-md-auto">
+                    <!--log out button-->
+                    <div
+                        class="d-flex flex-column flex-md-row justify-content-center justify-content-md-end align-items-center gap-2">
+
+                        <!--HOME BUTTON-->
+                        <a class="btn btn-outline-light w-100 w-lg-auto text-decoration-none"
+                            href="{{ url_for('main.home') }}">Home</a>
+
+                        <!--ADD TASKS BUTTON-->
+                        <a class="btn btn-outline-light w-100 w-lg-auto text-decoration-none"
+                            href="{{ url_for('main.add_task') }}">Add tasks</a>
+
+                        <!--Completed tasks button-->
+                        <a class="btn btn-outline-light w-100 w-lg-auto px-4 text-decoration-none"
+                            href="{{ url_for('main.completed_tasks') }}">Completed Tasks</a>
+
+                        <!--log out button-->
+                        <a class="btn btn-outline-light w-100 w-lg-auto px-4 text-decoration-none"
+                            href="{{ url_for('auth.logout') }}">Log
+                            out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<!-- ================= Main ================= -->
+<div class="container">
+    <div class="row">
+        <div class="col my-5">
+            <h2 class="text-light">Edit Tasks</h2>
+            <!-- form -->
+            <form action="/edit_task/{{task.id}}" method="post">
+
+                <!-- Task name input box -->
+                <div class="form-group mb-4 text-start text-light">
+                    <label for="task" class="form-label">Edit Task Name:</label>
+                    <input type="text" name="task_txt" id="task_txt" value="{{task.task_text}}"
+                        class="form-control rounded-3 border-0" required>
+                </div>
+                
+                <!-- Is daily check box-->
+                <div class="form-group mb-4 text-start">
+                    <label for="is_daily" class="form-chek-lable text-light">Daily task:</label>
+                    <input type="checkbox" class="form-check-input" id="is_daily" name="is_daily" {% if task.is_daily %}checked{% endif %}>
+                </div>
+
+                <!-- Color select field -->
+                <div class="form-group mb-4 text-start">
+                    <label for="tsk_color" class="text-light">selct a coror :</label>
+                    <input type="color" id="tsk_color" name="tsk_color" value="{{task.color}}">
+                </div>
+
+                <!-- submit button -->
+                <div class="d-grid mb-4">
+                    <button class="btn btn-primary rounded-3" type="submit">edit Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
