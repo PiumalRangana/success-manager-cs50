@@ -3,6 +3,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+<script src="../static/time.js"></script>
 <header class="siteHeader">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
@@ -53,12 +54,19 @@
 <div class="container">
     <!--Time-->
     <div class="row">
-        <div class="col my-5 d-flex justify-content-center">
-            <div class="clock text-light align-self-center" id="clock"></div>
+        <div class="col-12 col-lg-6 my-5 d-flex justify-content-center">
+            <div class="align-self-center">
+                <!--Clock-->
+                <div class="clock text-light" id="clock"></div>
+                
+                <!--Start timer button-->
+                <button class="btn btn-primary">Start timer</button>
+
+            </div>
         </div>
 
-    <!--Tasks list-->
-        <div class="col my-5">
+        <!--Tasks list-->
+        <div class="col-12 col-lg-6 my-5">
             <div>
                 <h2 class="text-light">Your Tasks</h2>
 
@@ -111,5 +119,4 @@
         </div>
     </div>
 </div>
-<script src="../static/time.js"></script>
 {% endblock %}
