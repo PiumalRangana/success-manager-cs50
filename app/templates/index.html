@@ -57,11 +57,9 @@
         <div class="col-12 col-lg-6 my-5 d-flex justify-content-center">
             <div class="align-self-center">
                 <!--Clock-->
-                <div class="clock text-light" id="clock"></div>
-                
-                <!--Start timer button-->
-                <button class="btn btn-primary">Start timer</button>
-
+                <div class="text-light" id="clock"></div>
+                <!--timer-->
+                <div class="text-light" id="timer"></div>
             </div>
         </div>
 
@@ -112,11 +110,19 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+                        <button id="timer_button" class="timer_button ms-1" style="background-color: transparent;
+                                 color: {{ task_text_color(task.color) }};
+                                 margin: 1px;
+                                 border: none;" onclick="startTimer({{ task.id }})">
+                            <i class="bi bi-stopwatch"></i>
+                            Start
+                        </button>
                     </div>
                 </li>
                 {% endfor %}
-            </ul>
         </div>
+        </ul>
     </div>
+</div>
 </div>
 {% endblock %}

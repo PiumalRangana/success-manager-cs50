@@ -40,3 +40,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+function updateClock(elapsed) {
+  const totalSeconds = Math.floor(elapsed / 1000)
+  const seconds = totalSeconds % 60
+  const minutes = Math.floor(totalSeconds / 60) % 60
+  const hours = Math.floor(totalSeconds / 3600)
+  document.querySelectorAll('.timer_button').forEach(btn => {
+  btn.disabled = true
+})
+  document.getElementById('timer').textContent = hours+":"+minutes+":"+seconds
+}
+
+function startVisualTimer(startTime) {
+    console.log("function caled -- stat visual timer")
+  setInterval(() => {
+    const now = new Date()
+    const elapsed = now - startTime
+    updateClock(elapsed)
+  }, 1000)
+}
