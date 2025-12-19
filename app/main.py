@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, redirect, url_for, request, session, flash
+from flask import Blueprint, render_template, redirect, url_for, request, session, flash, jsonify
 from flask_login import login_required, current_user
 from app.helpers import task_text_color
-from  .models import Task
+from  .models import Task, TimeSession
 from . import db
+from datetime import datetime, timezone
 
 main = Blueprint('main', __name__)
 
@@ -136,3 +137,28 @@ def completed_tasks_undo(task_id):
         db.session.commit()
     return redirect(url_for('main.home'))
 
+
+
+
+@login_required
+@main.route('/timer/start', methods=['POST'])
+def start_timer():
+    data = request.json
+    task_id = data['task_id']
+
+    start_time = datetime.now()
+
+    # save to DB
+    new_time_session = TimeSession(
+        task_id = task_id,
+        user_id = session["user_id"],
+        start_time = start_time
+    )
+
+    db.session.add(new_time_session)
+    db.session.commit()
+
+    return jsonify({
+        'timer_id': new_time_session.id,
+        'start_time': start_time.isoformat()
+    }), 200
