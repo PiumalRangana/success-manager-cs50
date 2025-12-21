@@ -52,6 +52,7 @@ function updateTimer(elapsed) {
 })
   document.getElementById("clock").hidden=true
   document.getElementById('timer').textContent = hours+":"+minutes+":"+seconds
+  document.getElementById('stopTimerButton').hidden=false
 }
 
 function startVisualTimer(startTime) {
