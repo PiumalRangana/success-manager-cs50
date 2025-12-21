@@ -40,6 +40,7 @@ def add_task():
         db.session.add(new_task)
         db.session.commit()
         flash("Task aded successfuly.")
+#TODO: Fix add-task route to use redirect instead of render_template (PRG pattern)
 
     return render_template("add_tasks.html")
 
@@ -61,7 +62,7 @@ def home():
     user = {'user_id': current_user.id, 'user_name': current_user.name}
 
     # get tasks from database
-    tasks = Task.query.filter_by(user_id=current_user.id, is_complete = 0).all()
+    tasks = Task.query.filter_by(user_id=current_user.id, is_complete=0, is_deleted=0).all()
 
     return render_template('index.html', user=user, tasks=tasks)
 
@@ -71,6 +72,18 @@ def home():
 def delete_task(task_id):
     task = Task.query.get(task_id)
     if task and task.user_id == current_user.id:
+        
+        #check for timer sessions
+        timer_sessions_for_task = TimeSession.query.filter_by(user_id=current_user.id, task_id=task.id).first()
+        #if timer sessions exisists
+        if timer_sessions_for_task:
+            #soft delete
+            task.is_deleted = True
+            db.session.commit()
+            return redirect(url_for('main.home'))
+        
+
+        # if no timer sessions hard telete
         db.session.delete(task)
         db.session.commit()
     return redirect(url_for('main.home'))
