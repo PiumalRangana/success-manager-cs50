@@ -41,7 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function updateClock(elapsed) {
+// timer
+function updateTimer(elapsed) {
   const totalSeconds = Math.floor(elapsed / 1000)
   const seconds = totalSeconds % 60
   const minutes = Math.floor(totalSeconds / 60) % 60
@@ -49,14 +50,16 @@ function updateClock(elapsed) {
   document.querySelectorAll('.timer_button').forEach(btn => {
   btn.disabled = true
 })
+  document.getElementById("clock").hidden=true
   document.getElementById('timer').textContent = hours+":"+minutes+":"+seconds
 }
 
 function startVisualTimer(startTime) {
-    console.log("function caled -- stat visual timer")
   setInterval(() => {
     const now = new Date()
     const elapsed = now - startTime
-    updateClock(elapsed)
+    updateTimer(elapsed)
   }, 1000)
 }
+
+ 
