@@ -39,25 +39,13 @@ def add_task():
 
         db.session.add(new_task)
         db.session.commit()
-        flash("Task aded successfuly.")
-#TODO: Fix add-task route to use redirect instead of render_template (PRG pattern)
+        return redirect(url_for('main.home'))
 
     return render_template("add_tasks.html")
 
 @login_required
-@main.route('/home',methods=["GET", "POST"])
+@main.route('/home',methods=["GET"])
 def home():
-    if request.method == "POST":
-        task_text = request.form.get("task_txt")
-        is_daily = request.form.get("is_daily")
-        task_color = request.form.get("tsk_color")
-        
-        # Save to data base
-        new_task = Task(user_id = session["user_id"], task_text = task_text, 
-                        is_daily = bool(is_daily), color = task_color)
-
-        db.session.add(new_task)
-        db.session.commit()
 
     user = {'user_id': current_user.id, 'user_name': current_user.name}
 
