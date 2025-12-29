@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from app.helpers import task_text_color
 from  .models import Task, TimeSession
 from . import db
-from datetime import datetime, timezone
+from datetime import datetime, timedelta
 
 main = Blueprint('main', __name__)
 
@@ -150,9 +150,7 @@ def completed_tasks_undo(task_id):
         db.session.commit()
     return redirect(url_for('main.home'))
 
-
-
-
+# start timer
 @login_required
 @main.route('/timer/start', methods=['POST'])
 def start_timer():
@@ -174,4 +172,44 @@ def start_timer():
     return jsonify({
         'timer_id': new_time_session.id,
         'start_time': start_time.isoformat()
+    }), 200
+
+# stop timer
+@login_required
+@main.route('/timer/stop', methods=['POST'])
+def stop_timer():
+    data = request.json
+    timer_id = data["time_session_id"]
+
+    # get the time session
+    time_session = TimeSession.query.filter_by(id=timer_id, user_id=current_user.id, status='running').first()
+
+    if not time_session:
+        return jsonify({"error": "No running timer found"}), 400
+
+
+    stop_time = datetime.now()
+    current_task_id = time_session.task_id
+
+    # Stop timer in db
+    time_session.end_time = stop_time
+    time_session.status = "stopped"
+    db.session.commit()
+
+    # get all time session data from data base
+    task_time_sessions = TimeSession.query.filter_by(task_id=current_task_id, user_id=current_user.id, status='stopped')
+    # calculate all the time spent in that task
+
+    duration = timedelta(0)
+    for session in task_time_sessions:
+        duration += (session.end_time - session.start_time)
+    
+    duration_seconds = int(duration.total_seconds())
+    print(duration_seconds)
+
+    # send it.
+
+    return jsonify({
+        'message': "timer stopped",
+        'duration': duration_seconds
     }), 200

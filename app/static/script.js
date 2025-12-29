@@ -52,15 +52,29 @@ function updateTimer(elapsed) {
 })
   document.getElementById("clock").hidden=true
   document.getElementById('timer').textContent = hours+":"+minutes+":"+seconds
+  document.getElementById('timer').hidden=false
   document.getElementById('stopTimerButton').hidden=false
 }
 
+// store running timer id
+let intervalId = null;
+
 function startVisualTimer(startTime) {
-  setInterval(() => {
+intervalId = setInterval(() => {
     const now = new Date()
     const elapsed = now - startTime
     updateTimer(elapsed)
   }, 1000)
 }
 
- 
+function stopVisualTimer(){
+  document.getElementById("stopTimerButton").hidden=true
+  document.getElementById("timer").hidden=true
+  document.getElementById("clock").hidden=false
+  document.querySelectorAll('.timer_button').forEach(btn => {
+    btn.disabled = false
+  })
+  clearInterval(intervalId);
+  intervalId = null;
+  console.log("Interval stopped.");
+}

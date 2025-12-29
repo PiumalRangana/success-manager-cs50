@@ -15,7 +15,31 @@ function startTimer(taskId) {
   .then(res => res.json())
   .then(data => {
   const startTime = new Date(data.start_time)
+  let time_session_id = data.timer_id
+
+  //store the time session id in local storage
+  localStorage.setItem("running_time_session_id", time_session_id)
+
   startVisualTimer(startTime)
 })
 }
 
+// Send the intention to stop the timer
+function stopTimer(){
+
+    stopVisualTimer()
+
+    let time_session_id = localStorage.getItem("running_time_session_id");
+
+    fetch('/timer/stop', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ time_session_id: time_session_id })
+  })
+
+  .then(res => res.json())
+  .then(data => {
+    console.log(data.duration)
+    localStorage.removeItem("running_time_session_id");
+    })
+  }
