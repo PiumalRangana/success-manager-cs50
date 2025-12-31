@@ -1,7 +1,11 @@
 // clock time
 setInterval(() => {
   const now = new Date();
-  document.getElementById('clock').textContent = now.toLocaleTimeString();
+  let clock =document.getElementById('clock');
+  if (clock){
+    clock.textContent = now.toLocaleTimeString();
+  }
+    
 }, 1000);
 
 // start timer intent

@@ -1,45 +1,46 @@
 // Wait until the DOM (HTML structure) is fully loaded before running JS
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ================= Toggle Password Visibility =================
-    const togglePassword = document.getElementById("togglePassword"); // Eye icon for password field
-    const passwordInput = document.getElementById("password");        // Password input field
+  // ================= Toggle Password Visibility =================
+  const togglePassword = document.getElementById("togglePassword"); // Eye icon for password field
+  const passwordInput = document.getElementById("password");        // Password input field
 
-    // When the eye icon is clicked, toggle between "password" and "text" type
-    togglePassword.addEventListener("click", () => {
-        const type = passwordInput.type === "password" ? "text" : "password";
-        passwordInput.type = type;
+  // When the eye icon is clicked, toggle between "password" and "text" type
+  togglePassword.addEventListener("click", () => {
+    const type = passwordInput.type === "password" ? "text" : "password";
+    passwordInput.type = type;
 
-        // Switch the icon between "eye" and "eye-slash"
-        togglePassword.classList.toggle("bi-eye");
-        togglePassword.classList.toggle("bi-eye-slash");
-    });
+    // Switch the icon between "eye" and "eye-slash"
+    togglePassword.classList.toggle("bi-eye");
+    togglePassword.classList.toggle("bi-eye-slash");
+  });
 
 
-    // ================= Toggle Confirm Password Visibility =================
-    const toggleConfirmPassword = document.getElementById("toggleConfirmPassword"); // Eye icon for confirm password
-    const confirmPasswordInput = document.getElementById("confirm_password");       // Confirm password input field
+  // ================= Toggle Confirm Password Visibility =================
+  const toggleConfirmPassword = document.getElementById("toggleConfirmPassword"); // Eye icon for confirm password
+  const confirmPasswordInput = document.getElementById("confirm_password");       // Confirm password input field
 
-    // When the eye icon is clicked, toggle between "password" and "text" type
-    toggleConfirmPassword.addEventListener("click", () => {
-        const type = confirmPasswordInput.type === "password" ? "text" : "password";
-        confirmPasswordInput.type = type;
+  // When the eye icon is clicked, toggle between "password" and "text" type
+  toggleConfirmPassword.addEventListener("click", () => {
+    const type = confirmPasswordInput.type === "password" ? "text" : "password";
+    confirmPasswordInput.type = type;
 
-        // Switch the icon between "eye" and "eye-slash"
-        toggleConfirmPassword.classList.toggle("bi-eye");
-        toggleConfirmPassword.classList.toggle("bi-eye-slash");
-    });
-    // ================= Confirm password Validation =================
-    const registerForm = document.getElementById("registerForm");
-    const errorField = document.getElementById("errorField")
-        registerForm.addEventListener("submit", (e) => {
-        if (passwordInput.value !== confirmPasswordInput.value) {
-            e.preventDefault(); // stop form from submitting
-            errorField.textContent = "Passwords do not match!";
-            confirmPasswordInput.focus();
-        }
-    });
-});
+    // Switch the icon between "eye" and "eye-slash"
+    toggleConfirmPassword.classList.toggle("bi-eye");
+    toggleConfirmPassword.classList.toggle("bi-eye-slash");
+  });
+  // ================= Confirm password Validation =================
+  const registerForm = document.getElementById("registerForm");
+  const errorField = document.getElementById("errorField")
+  registerForm.addEventListener("submit", (e) => {
+    if (passwordInput.value !== confirmPasswordInput.value) {
+      e.preventDefault(); // stop form from submitting
+      errorField.textContent = "Passwords do not match!";
+      confirmPasswordInput.focus();
+    }
+  });
+})
+
 
 // timer
 function updateTimer(elapsed) {
@@ -48,33 +49,48 @@ function updateTimer(elapsed) {
   const minutes = Math.floor(totalSeconds / 60) % 60
   const hours = Math.floor(totalSeconds / 3600)
   document.querySelectorAll('.timer_button').forEach(btn => {
-  btn.disabled = true
-})
-  document.getElementById("clock").hidden=true
-  document.getElementById('timer').textContent = hours+":"+minutes+":"+seconds
-  document.getElementById('timer').hidden=false
-  document.getElementById('stopTimerButton').hidden=false
+    btn.disabled = true
+  })
+  document.getElementById("clock").hidden = true
+  document.getElementById('timer').textContent = hours + ":" + minutes + ":" + seconds
+  document.getElementById('timer').hidden = false
+  document.getElementById('stopTimerButton').hidden = false
 }
 
 // store running timer id
 let intervalId = null;
 
 function startVisualTimer(startTime) {
-intervalId = setInterval(() => {
-    const now = new Date()
-    const elapsed = now - startTime
+  if (intervalId) return;
+
+  intervalId = setInterval(() => {
+    const elapsed = new Date()- startTime;
     updateTimer(elapsed)
   }, 1000)
 }
 
-function stopVisualTimer(){
-  document.getElementById("stopTimerButton").hidden=true
-  document.getElementById("timer").hidden=true
-  document.getElementById("clock").hidden=false
+function stopVisualTimer() {
+  document.getElementById("stopTimerButton").hidden = true
+  document.getElementById("timer").hidden = true
+  document.getElementById("clock").hidden = false
   document.querySelectorAll('.timer_button').forEach(btn => {
     btn.disabled = false
   })
   clearInterval(intervalId);
   intervalId = null;
-  console.log("Interval stopped.");
 }
+
+  // If a timer is running when the user logs in or refresh the page, this will show the running timer and the stop button.
+document.addEventListener("DOMContentLoaded", () => {
+  const timerEl = document.getElementById("running-timer");
+  const clockEl = document.getElementById("clock");
+
+  if (timerEl) {
+    clockEl.hidden = true;
+
+    const startedTime = new Date(timerEl.dataset.startedTime);
+    startVisualTimer(startedTime);
+  } else {
+    clockEl.hidden = false;
+  }
+});

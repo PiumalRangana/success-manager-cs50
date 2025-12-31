@@ -52,6 +52,17 @@ def home():
     # get tasks from database
     tasks = Task.query.filter_by(user_id=current_user.id, is_complete=0, is_deleted=0).all()
 
+    # check the data base for running timers.
+    running_timer = TimeSession.query.filter_by(user_id=current_user.id, status='running', end_time=None).first()
+
+    #if running timers
+    if running_timer:
+        # render home page with running session's id and start time
+        return render_template('index.html', user=user, tasks=tasks, running_timer_id=running_timer.id, 
+                               started_time=running_timer.start_time.isoformat())
+    
+
+    # If no timers running
     return render_template('index.html', user=user, tasks=tasks)
 
 # Delete task route
@@ -193,10 +204,8 @@ def stop_timer():
         duration += (session.end_time - session.start_time)
     
     duration_seconds = int(duration.total_seconds())
-    print(duration_seconds)
 
     # send it.
-
     return jsonify({
         'message': "timer stopped",
         'duration': duration_seconds
