@@ -169,7 +169,6 @@ def start_timer():
     db.session.commit()
 
     return jsonify({
-        'timer_id': new_time_session.id,
         'start_time': start_time.isoformat()
     }), 200
 
@@ -177,11 +176,9 @@ def start_timer():
 @login_required
 @main.route('/timer/stop', methods=['POST'])
 def stop_timer():
-    data = request.json
-    timer_id = data["time_session_id"]
 
-    # get the time session
-    time_session = TimeSession.query.filter_by(id=timer_id, user_id=current_user.id, status='running').first()
+    # get the running time session
+    time_session = TimeSession.query.filter_by(user_id=current_user.id, status='running').first()
 
     if not time_session:
         return jsonify({"error": "No running timer found"}), 400
