@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from app.helpers import task_text_color
 from  .models import Task, TimeSession
 from . import db
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
 main = Blueprint('main', __name__)
 
@@ -207,3 +207,46 @@ def stop_timer():
         'message': "timer stopped",
         'duration': duration_seconds
     }), 200
+# -------------------------------------------------------------------
+# API: Get today's sessions (local time)
+# -------------------------------------------------------------------
+# Returns all time sessions that started today.
+# Used by the D3 donut chart to render daily activity.
+#
+# Important:
+# - We are currently operating fully in LOCAL TIME.
+# - We filter sessions by today's date boundaries.
+# - We return only time-of-day (HH:MM:SS:mmm) because
+#   the frontend reconstructs time relative to "today".
+# -------------------------------------------------------------------
+
+@login_required
+@main.route('/api/sessions/today')
+def get_today_sessions():
+    now = datetime.now()
+
+    # Start and end of the current day (local time)
+    today_start = datetime.combine(now.date(), time.min)
+    today_end = datetime.combine(now.date(), time.max)
+
+    # Fetch sessions that started today
+    # (We assume sessions do not span multiple days)
+    sessions = TimeSession.query.filter(
+        TimeSession.start_time >= today_start,
+        TimeSession.start_time <= today_end
+    ).all()
+
+    # Return time-of-day only (no date)
+    # Format: HH:MM:SS:mmm
+    # We trim microseconds to milliseconds ([:-3])
+    return jsonify([
+        {
+            "start_time": s.start_time.strftime("%H:%M:%S:%f")[:-3],
+            "end_time": (
+                s.end_time.strftime("%H:%M:%S:%f")[:-3]
+                if s.end_time else None
+            ),
+            "color": s.task.color
+        }
+        for s in sessions
+    ])
