@@ -51,7 +51,6 @@ function updateTimer(elapsed) {
   document.querySelectorAll('.timer_button').forEach(btn => {
     btn.disabled = true
   })
-  document.getElementById("clock").hidden = true
   document.getElementById('timer').textContent = hours + ":" + minutes + ":" + seconds
   document.getElementById('timer').hidden = false
   document.getElementById('stopTimerButton').hidden = false
@@ -72,7 +71,6 @@ function startVisualTimer(startTime) {
 function stopVisualTimer() {
   document.getElementById("stopTimerButton").hidden = true
   document.getElementById("timer").hidden = true
-  document.getElementById("clock").hidden = false
   document.querySelectorAll('.timer_button').forEach(btn => {
     btn.disabled = false
   })
@@ -83,14 +81,10 @@ function stopVisualTimer() {
   // If a timer is running when the user logs in or refresh the page, this will show the running timer and the stop button.
 document.addEventListener("DOMContentLoaded", () => {
   const timerEl = document.getElementById("running-timer");
-  const clockEl = document.getElementById("clock");
 
   if (timerEl) {
-    clockEl.hidden = true;
 
     const startedTime = new Date(timerEl.dataset.startedTime);
     startVisualTimer(startedTime);
-  } else {
-    clockEl.hidden = false;
   }
 });

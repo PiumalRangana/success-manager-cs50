@@ -1,13 +1,3 @@
-// clock time
-setInterval(() => {
-  const now = new Date();
-  let clock =document.getElementById('clock');
-  if (clock){
-    clock.textContent = now.toLocaleTimeString();
-  }
-    
-}, 1000);
-
 // start timer intent
 // send the intention of starting the timer to the server
 function startTimer(taskId) {
