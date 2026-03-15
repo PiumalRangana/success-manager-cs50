@@ -16,25 +16,31 @@
 import { createChartRenderer } from "./chartRenderer.js";
 import { createChartController } from "./chartController.js";
 import { parseToToday } from "./chartDataPipeline.js";
+function renderDailyChart(){
+  const sessions = [];
 
-const sessions = [];
+  fetch('/api/sessions/today', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  })
+    .then(res => res.json())
+    .then(data => {
+        for(let i=0; i < data.length; i++){
+          sessions.push({
+            "start": parseToToday(data[i].start_time),
+            "end": data[i].end_time ? parseToToday(data[i].end_time) : null,
+            "color":data[i].color
+          })
+        }
+          document.querySelector("#chart").innerHTML = "";
+          const renderer = createChartRenderer("#chart");
+          const controller = createChartController(renderer, sessions);
 
-fetch('/api/sessions/today', {
-  method: 'GET',
-  headers: { 'Content-Type': 'application/json' }
-})
-  .then(res => res.json())
-  .then(data => {
-      for(let i=0; i < data.length; i++){
-        sessions.push({
-          "start": parseToToday(data[i].start_time),
-          "end": data[i].end_time ? parseToToday(data[i].end_time) : null,
-          "color":data[i].color
-        })
+          controller.start();
       }
-        const renderer = createChartRenderer("#chart");
-        const controller = createChartController(renderer, sessions);
+  )
+};
 
-        controller.start();
-    }
-);
+window.renderDailyChart = renderDailyChart;
+
+renderDailyChart();

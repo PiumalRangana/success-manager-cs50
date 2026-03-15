@@ -11,6 +11,8 @@ function startTimer(taskId) {
   const startTime = new Date(data.start_time)
 
   startVisualTimer(startTime)
+  // refresh the time ring to reflect the new session
+  renderDailyChart();
 })
 }
 
@@ -26,6 +28,7 @@ function stopTimer(){
 
   .then(res => res.json())
   .then(data => {
-    console.log(data.duration)
+    // refresh the time ring to reflect the new session
+    renderDailyChart();
     })
   }
