@@ -48,12 +48,7 @@ function updateTimer(elapsed) {
   const seconds = totalSeconds % 60
   const minutes = Math.floor(totalSeconds / 60) % 60
   const hours = Math.floor(totalSeconds / 3600)
-  document.querySelectorAll('.timer_button').forEach(btn => {
-    btn.disabled = true
-  })
   document.getElementById('timer').textContent = hours + ":" + minutes + ":" + seconds
-  document.getElementById('timer').hidden = false
-  document.getElementById('stopTimerButton').hidden = false
 }
 
 // store running timer id
@@ -61,7 +56,13 @@ let intervalId = null;
 
 function startVisualTimer(startTime) {
   if (intervalId) return;
-
+  
+  document.getElementById('timer').textContent = "0:0:0"
+  document.getElementById('timer').hidden = false
+  document.getElementById('stopTimerButton').hidden = false
+  document.querySelectorAll('.timer_button').forEach(btn => {
+    btn.disabled = true
+  })
   intervalId = setInterval(() => {
     const elapsed = new Date()- startTime;
     updateTimer(elapsed)
@@ -73,6 +74,7 @@ function stopVisualTimer() {
   document.getElementById("timer").hidden = true
   document.querySelectorAll('.timer_button').forEach(btn => {
     btn.disabled = false
+  document.getElementById('timer').textContent = "0:0:0"
   })
   clearInterval(intervalId);
   intervalId = null;
