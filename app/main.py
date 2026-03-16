@@ -194,8 +194,8 @@ def stop_timer():
 
     # get all time session data from data base
     task_time_sessions = TimeSession.query.filter_by(task_id=current_task_id, user_id=current_user.id, status='stopped')
-    # calculate all the time spent in that task
 
+    # calculate all the time spent in that task
     duration = timedelta(0)
     for session in task_time_sessions:
         duration += (session.end_time - session.start_time)
@@ -231,10 +231,7 @@ def get_today_sessions():
 
     # Fetch sessions that started today
     # (We assume sessions do not span multiple days)
-    sessions = TimeSession.query.filter(
-        TimeSession.start_time >= today_start,
-        TimeSession.start_time <= today_end
-    ).all()
+    sessions = TimeSession.query.filter(TimeSession.start_time >= today_start, TimeSession.start_time <= today_end, TimeSession.user_id == current_user.id).all()
 
     # Return time-of-day only (no date)
     # Format: HH:MM:SS:mmm
