@@ -41,52 +41,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 })
 
-
-// timer
-function updateTimer(elapsed) {
-  const totalSeconds = Math.floor(elapsed / 1000)
-  const seconds = totalSeconds % 60
-  const minutes = Math.floor(totalSeconds / 60) % 60
-  const hours = Math.floor(totalSeconds / 3600)
-  document.getElementById('timer').textContent = hours + ":" + minutes + ":" + seconds
-}
-
-// store running timer id
-let intervalId = null;
-
-function startVisualTimer(startTime) {
-  if (intervalId) return;
-  
-  document.getElementById('timer').textContent = "0:0:0"
-  document.getElementById('timer').hidden = false
-  document.getElementById('stopTimerButton').hidden = false
-  document.querySelectorAll('.timer_button').forEach(btn => {
-    btn.disabled = true
-  })
-  intervalId = setInterval(() => {
-    const elapsed = new Date()- startTime;
-    updateTimer(elapsed)
-  }, 1000)
-}
-
-function stopVisualTimer() {
-  document.getElementById("stopTimerButton").hidden = true
-  document.getElementById("timer").hidden = true
-  document.querySelectorAll('.timer_button').forEach(btn => {
-    btn.disabled = false
-  document.getElementById('timer').textContent = "0:0:0"
-  })
-  clearInterval(intervalId);
-  intervalId = null;
-}
-
   // If a timer is running when the user logs in or refresh the page, this will show the running timer and the stop button.
 document.addEventListener("DOMContentLoaded", () => {
   const timerEl = document.getElementById("running-timer");
 
   if (timerEl) {
 
-    const startedTime = new Date(timerEl.dataset.startedTime);
-    startVisualTimer(startedTime);
+    //const startedTime = new Date(timerEl.dataset.startedTime);
+    document.getElementById('stopTimerButton').hidden = false;
   }
 });

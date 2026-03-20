@@ -24,16 +24,19 @@ export function createChartController(renderer, sessions) {
   function getCenterTime(session) {
     const activeSession = session.find(s => s.end === null);
     if (activeSession){
+     // console.log(activeSession)
       const elapsed = Date.now() - activeSession.start;
 
       return formatElapsed(elapsed);
 
     } else {
       return formatTime(new Date());
-    }  }
+    }}
 
   function start() {
-
+    if (intervalId) {
+      return; // Prevent multiple intervals
+    }
     const initialNow = Date.now();
 
     const segments = buildSegments(sessions, initialNow);

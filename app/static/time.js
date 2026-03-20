@@ -6,29 +6,33 @@ function startTimer(taskId) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ task_id: taskId })
   })
-  .then(res => res.json())
-  .then(data => {
-  const startTime = new Date(data.start_time)
-
-  startVisualTimer(startTime)
-  // refresh the time ring to reflect the new session
-  renderDailyChart();
-})
+  .then(response => {
+    // refresh the time ring to reflect the new session started
+    renderDailyChart();
+    document.getElementById('stopTimerButton').hidden = false;
+    document.querySelectorAll('.timer_button').forEach(btn => {
+      btn.disabled = true;
+    })
+  })
+  .catch(error => {
+    console.error('Error starting timer:', error);
+  });
 }
-
 // Send the intention to stop the timer
-function stopTimer(){
-
-    stopVisualTimer()
-
-    fetch('/timer/stop', {
+function stopTimer() {
+  fetch('/timer/stop', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   })
-
-  .then(res => res.json())
-  .then(data => {
-    // refresh the time ring to reflect the new session
+  .then(response => {
+    // Optionally check response.ok or parse JSON here
     renderDailyChart();
+    document.getElementById('stopTimerButton').hidden = true;
+    document.querySelectorAll('.timer_button').forEach(btn => {
+      btn.disabled = false;
     })
-  }
+  })
+  .catch(error => {
+    console.error('Error stopping timer:', error);
+  });
+}
