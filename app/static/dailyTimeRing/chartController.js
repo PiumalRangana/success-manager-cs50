@@ -13,12 +13,24 @@ import {
   buildSegments,
   segmentsToAngles,
   getCurrentStatus,
-  formatTime
+  formatTime,
+  formatElapsed
 } from "./chartDataPipeline.js";
 
 export function createChartController(renderer, sessions) {
 
   let intervalId = null;
+
+  function getCenterTime(session) {
+    const activeSession = session.find(s => s.end === null);
+    if (activeSession){
+      const elapsed = Date.now() - activeSession.start;
+
+      return formatElapsed(elapsed);
+
+    } else {
+      return formatTime(new Date());
+    }  }
 
   function start() {
 
@@ -38,7 +50,7 @@ export function createChartController(renderer, sessions) {
       renderer.updateRing(angles);
 
       renderer.updateCenter(
-        formatTime(new Date(now)),
+        getCenterTime(sessions),
         getCurrentStatus(sessions, now)
       );
 

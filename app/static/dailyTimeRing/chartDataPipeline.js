@@ -134,6 +134,17 @@ export function formatTime(date) {
   });
 }
 
+// Format elapsed time for center clock
+export function formatElapsed(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const seconds = totalSeconds % 60;
+  const minutes = Math.floor(totalSeconds / 60) % 60;
+  const hours = Math.floor(totalSeconds / 3600);
+
+  const pad = (n) => n.toString().padStart(2, "0");
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
 /* ======================================================
  * PARSING DATABASE STRINGS TO LOCAL TIMESTAMPS
  * ====================================================== */
