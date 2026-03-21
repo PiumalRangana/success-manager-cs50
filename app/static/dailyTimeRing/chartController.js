@@ -33,6 +33,11 @@ export function createChartController(renderer, sessions) {
       return formatTime(new Date());
     }}
 
+  function getStopButtonVisibility(sessions) {
+    const activeSession = sessions.find(s => s.end === null);
+    return activeSession ? true : false;
+  }
+
   function start() {
     if (intervalId) {
       return; // Prevent multiple intervals
@@ -54,7 +59,8 @@ export function createChartController(renderer, sessions) {
 
       renderer.updateCenter(
         getCenterTime(sessions),
-        getCurrentStatus(sessions, now)
+        getCurrentStatus(sessions, now),
+        getStopButtonVisibility(sessions)
       );
 
     }, 1000);

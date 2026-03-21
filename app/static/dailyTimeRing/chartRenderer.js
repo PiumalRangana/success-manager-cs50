@@ -58,6 +58,34 @@ export function createChartRenderer(containerSelector) {
     .attr("letter-spacing", "1px")
     .attr("fill", "#666");
 
+  // Stop timer button
+  const stopButton = centerGroup
+    .append("rect")
+    .attr("x", -30)
+    .attr("y", 40)
+    .attr("width", 60)
+    .attr("height", 30)
+    .attr("fill", "#ff4444")
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("display", "none") // Hidden by default
+    .on("click", () => {
+      // Placeholder for stop timer action
+      stopTimer();
+    });
+
+  const stopButtonText = centerGroup
+    .append("text")
+    .attr("y", 60)
+    .attr("font-size", "14px")
+    .attr("fill", "#fff")
+    .text("STOP")
+    .attr("display", "none") // Hidden by default
+    .on("click", () => {
+      // Placeholder for stop timer action
+      stopTimer();
+    });
+
   /* ======================================================
   * ARC GENERATOR
   * ====================================================== */
@@ -105,9 +133,11 @@ export function createChartRenderer(containerSelector) {
       .attr("d", arc);
   }
 
-  function updateCenter(clock, status) {
+  function updateCenter(clock, status, showStopButton) {
     clockText.text(clock);
     statusText.text(status);
+    stopButton.style("display", showStopButton ? "block" : "none");
+    stopButtonText.style("display", showStopButton ? "block" : "none");
   }
 
   return{
