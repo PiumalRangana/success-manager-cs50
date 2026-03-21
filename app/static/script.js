@@ -41,13 +41,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 })
 
-  // If a timer is running when the user logs in or refresh the page, this will show the running timer and the stop button.
+  // If a timer is running when the user logs in or refresh the page, this will show the running timer and disable the start timer buttons.
 document.addEventListener("DOMContentLoaded", () => {
   const timerEl = document.getElementById("running-timer");
 
   if (timerEl) {
-
-    //const startedTime = new Date(timerEl.dataset.startedTime);
-    document.getElementById('stopTimerButton').hidden = false;
+      document.querySelectorAll('.timer_button').forEach(btn => {
+      btn.disabled = true;
+    })
   }
 });

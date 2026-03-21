@@ -9,7 +9,6 @@ function startTimer(taskId) {
   .then(response => {
     // refresh the time ring to reflect the new session started
     renderDailyChart();
-    document.getElementById('stopTimerButton').hidden = false;
     document.querySelectorAll('.timer_button').forEach(btn => {
       btn.disabled = true;
     })
@@ -27,7 +26,6 @@ function stopTimer() {
   .then(response => {
     // Optionally check response.ok or parse JSON here
     renderDailyChart();
-    document.getElementById('stopTimerButton').hidden = true;
     document.querySelectorAll('.timer_button').forEach(btn => {
       btn.disabled = false;
     })
