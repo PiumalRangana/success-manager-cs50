@@ -69,6 +69,7 @@ export function createChartRenderer(containerSelector) {
     .attr("rx", 5)
     .attr("ry", 5)
     .attr("display", "none") // Hidden by default
+    .attr("cursor", "pointer")
     .on("click", () => {
       // Placeholder for stop timer action
       stopTimer();
@@ -80,7 +81,8 @@ export function createChartRenderer(containerSelector) {
     .attr("font-size", "14px")
     .attr("fill", "#fff")
     .text("STOP")
-    .attr("display", "none") // Hidden by default
+    .attr("display", "none") // Hidden by 
+    .attr("cursor", "pointer")
     .on("click", () => {
       // Placeholder for stop timer action
       stopTimer();
