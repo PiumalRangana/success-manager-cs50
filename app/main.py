@@ -153,6 +153,12 @@ def completed_tasks_undo(task_id):
 @login_required
 @main.route('/timer/start', methods=['POST'])
 def start_timer():
+
+    # Check if there's already a running timer for the user
+    running_timer = TimeSession.query.filter_by(user_id=current_user.id, status='running', end_time=None).first()
+    if running_timer:
+        return jsonify({"error": "A timer is already running"}), 400
+
     data = request.json
     task_id = data['task_id']
 

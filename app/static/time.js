@@ -7,6 +7,12 @@ function startTimer(taskId) {
     body: JSON.stringify({ task_id: taskId })
   })
   .then(response => {
+    if (!response.ok) {
+      throw new Error("Timer already running");
+    }
+    return response.json();
+  })
+  .then(() => {
     // refresh the time ring to reflect the new session started
     renderDailyChart();
     document.querySelectorAll('.timer_button').forEach(btn => {
