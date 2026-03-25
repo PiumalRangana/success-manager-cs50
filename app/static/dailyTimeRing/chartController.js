@@ -16,11 +16,12 @@ import {
   formatTime,
   formatElapsed
 } from "./chartDataPipeline.js";
-import { getTodaySessions } from "./dailySessionStore.js";
+import { getTodaySessions, subscribe } from "./dailySessionStore.js";
 
 export function createChartController(renderer) {
 
   let intervalId = null;
+  let unsubscribe = null;
 
   function getCenterTime(session) {
     const activeSession = session.find(s => s.end === null);
@@ -41,15 +42,31 @@ export function createChartController(renderer) {
     if (intervalId) {
       return; // Prevent multiple intervals
     }
-    const sessions = getTodaySessions();
+    const initialsessions = getTodaySessions();
     const initialNow = Date.now();
 
-    const segments = buildSegments(sessions, initialNow);
+    const segments = buildSegments(initialsessions, initialNow);
     const angles = segmentsToAngles(segments);
 
     renderer.drawRing(angles);
 
     let lastSegmentCount = segments.length;
+
+  unsubscribe = subscribe((sessions) => {
+    const now = Date.now();
+
+    const segments = buildSegments(sessions, now);
+    const angles = segmentsToAngles(segments);
+
+    renderer.clear();
+    renderer.drawRing(angles);
+
+    renderer.updateCenter(
+      getCenterTime(sessions),
+      getCurrentStatus(sessions, now),
+      getStopButtonVisibility(sessions)
+    );
+  });
 
     intervalId = setInterval(() => {
       const sessions = getTodaySessions();
@@ -58,15 +75,7 @@ export function createChartController(renderer) {
       const segments = buildSegments(sessions, now);
       const angles = segmentsToAngles(segments);
 
-      // Detect structural change
-      if (segments.length === lastSegmentCount) {
-        renderer.updateRing(angles);
-
-      } else {
-        renderer.clear();
-        renderer.drawRing(angles);
-        lastSegmentCount = segments.length;
-      }
+      renderer.updateRing(angles);
 
       renderer.updateCenter(
         getCenterTime(sessions),
@@ -82,6 +91,10 @@ export function createChartController(renderer) {
       clearInterval(intervalId);
       intervalId = null;
     }
+    if (unsubscribe) {
+      unsubscribe();
+      unsubscribe = null;
+}
   }
 
   return {
