@@ -3,7 +3,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<script src="../static/time.js"></script>
+<script type="module" src="../static/time.js"></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script type="module"
         src="{{ url_for('static', filename='dailyTimeRing/chartCore.js') }}">

@@ -16,23 +16,22 @@ import {
   formatTime,
   formatElapsed
 } from "./chartDataPipeline.js";
+import { getTodaySessions } from "./dailySessionStore.js";
 
-export function createChartController(renderer, sessions) {
+export function createChartController(renderer) {
 
   let intervalId = null;
 
   function getCenterTime(session) {
     const activeSession = session.find(s => s.end === null);
     if (activeSession){
-     // console.log(activeSession)
       const elapsed = Date.now() - activeSession.start;
-
       return formatElapsed(elapsed);
 
     } else {
       return formatTime(new Date());
     }}
-
+  
   function getStopButtonVisibility(sessions) {
     const activeSession = sessions.find(s => s.end === null);
     return activeSession ? true : false;
@@ -42,6 +41,7 @@ export function createChartController(renderer, sessions) {
     if (intervalId) {
       return; // Prevent multiple intervals
     }
+    const sessions = getTodaySessions();
     const initialNow = Date.now();
 
     const segments = buildSegments(sessions, initialNow);
@@ -49,13 +49,24 @@ export function createChartController(renderer, sessions) {
 
     renderer.drawRing(angles);
 
+    let lastSegmentCount = segments.length;
+
     intervalId = setInterval(() => {
+      const sessions = getTodaySessions();
       const now = Date.now();
 
       const segments = buildSegments(sessions, now);
       const angles = segmentsToAngles(segments);
 
-      renderer.updateRing(angles);
+      // Detect structural change
+      if (segments.length === lastSegmentCount) {
+        renderer.updateRing(angles);
+
+      } else {
+        renderer.clear();
+        renderer.drawRing(angles);
+        lastSegmentCount = segments.length;
+      }
 
       renderer.updateCenter(
         getCenterTime(sessions),

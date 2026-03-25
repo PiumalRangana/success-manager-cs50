@@ -1,3 +1,5 @@
+import { loadTodaySessions } from "./dailyTimeRing/dailySessionStore.js";
+
 // start timer intent
 // send the intention of starting the timer to the server
 function startTimer(taskId) {
@@ -14,10 +16,10 @@ function startTimer(taskId) {
   })
   .then(() => {
     // refresh the time ring to reflect the new session started
-    renderDailyChart();
     document.querySelectorAll('.timer_button').forEach(btn => {
       btn.disabled = true;
     })
+    loadTodaySessions()
   })
   .catch(error => {
     console.error('Error starting timer:', error);
@@ -31,12 +33,16 @@ function stopTimer() {
   })
   .then(response => {
     // Optionally check response.ok or parse JSON here
-    renderDailyChart();
     document.querySelectorAll('.timer_button').forEach(btn => {
       btn.disabled = false;
     })
+    loadTodaySessions()
   })
   .catch(error => {
     console.error('Error stopping timer:', error);
   });
 }
+
+// Make it accessible globally
+window.startTimer = startTimer;
+window.stopTimer = stopTimer;

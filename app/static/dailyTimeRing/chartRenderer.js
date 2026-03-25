@@ -142,9 +142,13 @@ export function createChartRenderer(containerSelector) {
     stopButtonText.style("display", showStopButton ? "block" : "none");
   }
 
+  function clear() {
+    svg.selectAll("path").remove();
+}
   return{
     drawRing,
     updateRing,
-    updateCenter
+    updateCenter,
+    clear
   }
 }

@@ -15,39 +15,23 @@
 
 import { createChartRenderer } from "./chartRenderer.js";
 import { createChartController } from "./chartController.js";
-import { parseToToday } from "./chartDataPipeline.js";
-
+import { loadTodaySessions } from "./dailySessionStore.js";
 let controller = null;
 
-function renderDailyChart() {
-  fetch('/api/sessions/today', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' }
-  })
-    .then(res => res.json())
-    .then(data => {
-      return data.map(item => ({
-        start: parseToToday(item.start_time),
-        end: item.end_time ? parseToToday(item.end_time) : null,
-        color: item.color
-      }));
-    })
-    .then(sessions => {
-      document.querySelector("#chart").innerHTML = "";
-      const renderer = createChartRenderer("#chart");
+async function renderDailyChart() {
+  try {
+    await loadTodaySessions()
+    document.querySelector("#chart").innerHTML = "";
+    const renderer = createChartRenderer("#chart");
 
-      if (controller) {
-        controller.stop();
-      }
+    if (controller) controller.stop();
 
-      controller = createChartController(renderer, sessions);
-      controller.start();
-    })
-    .catch(error => {
-      console.error("Error rendering chart:", error);
-    });
+    controller = createChartController(renderer);
+    controller.start();
+
+  } catch (err) {
+    console.error("Error rendering chart:", err);
+  }
 }
-
-window.renderDailyChart = renderDailyChart;
 
 renderDailyChart();
