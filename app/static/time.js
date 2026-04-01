@@ -1,7 +1,28 @@
-import { loadTodaySessions, callTestRoute} from "./dailyTimeRing/dailySessionStore.js";
+/**********************************************************
+ * TIMER CONTROL
+ * --------------------------------------------------------
+ * Handles timer start/stop operations.
+ *
+ * Responsibilities:
+ * - Send timer control requests to the server
+ * - Refresh session data after state changes
+ * - Manage UI button disabled state
+ *
+ * Does NOT:
+ * - Render the daily time ring (separate module)
+ * - Calculate time values
+ **********************************************************/
 
-// start timer intent
-// send the intention of starting the timer to the server
+import { loadTodaySessions } from "./dailyTimeRing/dailySessionStore.js";
+
+/* ======================================================
+ * TIMER CONTROL
+ * ====================================================== */
+
+/**
+ * Start a focus session for the given task.
+ * Sends request to server, disables buttons, and refreshes ring.
+ */
 function startTimer(taskId) {
   fetch('/timer/start', {
     method: 'POST',
@@ -15,33 +36,41 @@ function startTimer(taskId) {
     return response.json();
   })
   .then(() => {
-    // refresh the time ring to reflect the new session started
+    // Disable buttons and refresh the time ring
     document.querySelectorAll('.timer_button').forEach(btn => {
       btn.disabled = true;
     })
-    callTestRoute()
+    loadTodaySessions()
   })
   .catch(error => {
     console.error('Error starting timer:', error);
   });
 }
-// Send the intention to stop the timer
+
+/**
+ * Stop the current focus session.
+ * Sends request to server, enables buttons, and refreshes ring.
+ */
 function stopTimer() {
   fetch('/timer/stop', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   })
   .then(response => {
-    // Optionally check response.ok or parse JSON here
+    // Enable buttons and refresh the time ring
     document.querySelectorAll('.timer_button').forEach(btn => {
       btn.disabled = false;
     })
-    callTestRoute()
+    loadTodaySessions()
   })
   .catch(error => {
     console.error('Error stopping timer:', error);
   });
 }
+
+/* ======================================================
+ * GLOBAL EXPORTS
+ * ====================================================== */
 
 // Make it accessible globally
 window.startTimer = startTimer;

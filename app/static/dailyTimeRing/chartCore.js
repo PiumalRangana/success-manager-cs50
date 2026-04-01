@@ -4,23 +4,25 @@
  * Entry point for the daily time ring feature.
  *
  * Responsibilities:
- * - Fetch today's session data from backend
- * - Parse database time strings into local timestamps
+ * - Load today's session data
+ * - Initialize renderer and controller
  * - Wire renderer and controller together
+ * - Start the chart controller
  *
  * Does NOT:
- * - Contain rendering logic
- * - Contain time calculations
+ * - Contain rendering logic (see chartRenderer.js)
+ * - Contain time calculations (see chartDataPipeline.js)
+ * - Parse database strings (see dailySessionStore.js)
  **********************************************************/
 
 import { createChartRenderer } from "./chartRenderer.js";
 import { createChartController } from "./chartController.js";
-import { loadTodaySessions, callTestRoute } from "./dailySessionStore.js";
+import { loadTodaySessions } from "./dailySessionStore.js";
 let controller = null;
 
 async function renderDailyChart() {
   try {
-    await callTestRoute();
+    await loadTodaySessions();
     document.querySelector("#chart").innerHTML = "";
     const renderer = createChartRenderer("#chart");
 

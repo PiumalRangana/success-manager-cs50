@@ -213,50 +213,19 @@ def stop_timer():
         'message': "timer stopped",
         'duration': duration_seconds
     }), 200
+
 # -------------------------------------------------------------------
-# API: Get today's sessions (local time)
+# API: Get chart sessions (local time)
 # -------------------------------------------------------------------
-# Returns all time sessions that started today.
+# Returns all time sessions that started today + previous days without end times.
 # Used by the D3 donut chart to render daily activity.
 #
 # Important:
-# - We are currently operating fully in LOCAL TIME.
-# - We filter sessions by today's date boundaries.
-# - We return only time-of-day (HH:MM:SS:mmm) because
+# - We are currently operating fully in LOCAL TIME
 #   the frontend reconstructs time relative to "today".
 # -------------------------------------------------------------------
-
 @login_required
-@main.route('/api/sessions/today')
-def get_today_sessions():
-    now = datetime.now()
-
-    # Start and end of the current day (local time)
-    today_start = datetime.combine(now.date(), time.min)
-    today_end = datetime.combine(now.date(), time.max)
-
-    # Fetch sessions that started today
-    # (We assume sessions do not span multiple days)
-    sessions = TimeSession.query.filter(TimeSession.start_time >= today_start, TimeSession.start_time <= today_end, TimeSession.user_id == current_user.id).all()
-
-    # Return time-of-day only (no date)
-    # Format: HH:MM:SS:mmm
-    # We trim microseconds to milliseconds ([:-3])
-    return jsonify([
-        {
-            "start_time": s.start_time.strftime("%H:%M:%S:%f")[:-3],
-            "end_time": (
-                s.end_time.strftime("%H:%M:%S:%f")[:-3]
-                if s.end_time else None
-            ),
-            "color": s.task.color
-        }
-        for s in sessions
-    ])
-
-# send tasks started before today and no end time + started today
-@login_required
-@main.route('/api/chart/sessions')
+@main.route('/api/sessions/daily')
 def get_time_ring_data():
     now = datetime.now()
 

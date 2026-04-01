@@ -1,5 +1,5 @@
 /**********************************************************
- * DAILY TIME RING
+ * DAILY TIME RING – DATA PIPELINE
  * --------------------------------------------------------
  * Core truth model:
  *
@@ -11,11 +11,12 @@
  * - Animation is cosmetic only
  * - Center shows "present", ring shows "history"
  *
- * Converts database time string (HH:MM:SS:ms)
- * into a local timestamp for today.
- *
- * Used to align backend local times with
- * ring orientation (midnight at top).
+ * Responsibilities:
+ * - Convert sessions into visual segments
+ * - Convert segments into angles for SVG rendering
+ * - Determine current focus status
+ * - Format time display for center clock
+ * - Parse ISO datetime strings to milliseconds
  **********************************************************/
 
 const DAY_SECONDS = 24 * 60 * 60;
@@ -150,16 +151,8 @@ export function formatElapsed(ms) {
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 /* ======================================================
- * PARSING DATABASE STRINGS TO LOCAL TIMESTAMPS
+ * ISO DATETIME → MILLISECONDS
  * ====================================================== */
-
-
-export function parseToToday(datetimeStr) {
-  const [hour, minute, second, mSeconds] = datetimeStr.split(":").map(Number);
-      
-  // milliseconds since midnight
-  return new Date().setHours(hour, minute, second, mSeconds);
-}
-export function testParse(dateTimeIsoFormat) {
+export function isoToMillis(dateTimeIsoFormat) {
   return new Date(dateTimeIsoFormat).getTime();
 }

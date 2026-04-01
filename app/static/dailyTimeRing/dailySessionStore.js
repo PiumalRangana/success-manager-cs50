@@ -1,51 +1,74 @@
-import { parseToToday, testParse } from "./chartDataPipeline.js";
+/**********************************************************
+ * DAILY TIME RING – SESSION STORE
+ * --------------------------------------------------------
+ * Manages today's session data with a pub/sub pattern.
+ *
+ * Responsibilities:
+ * - Fetch today's focus sessions from the API
+ * - Parse ISO datetime strings to milliseconds
+ * - Store sessions in memory
+ * - Notify subscribers when data changes
+ * - Provide read-only access to session data
+ *
+ * Does NOT:
+ * - Contain rendering logic
+ * - Contain time calculations
+ **********************************************************/
+
+import { isoToMillis } from "./chartDataPipeline.js";
+
+/* ======================================================
+ * STATE
+ * ====================================================== */
 
 let listeners = [];
 let sessions = [];
 
+/* ======================================================
+ * LOAD & FETCH
+ * ====================================================== */
 
-// testing
-let testSessions = [];
-
-export async function callTestRoute() {
-  const res = await fetch('/api/chart/sessions', {
+/**
+ * Fetch today's sessions from server API.
+ * Parses ISO datetimes to milliseconds and notifies subscribers.
+ */
+export async function loadTodaySessions() {
+  const res = await fetch('/api/sessions/daily', {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' }
   });
   const data = await res.json();
 
-    testSessions = data.map(item => ({
-      start: testParse(item.start_time),
-      end: item.end_time ? testParse(item.end_time) : null,
+    sessions = data.map(item => ({
+      start: isoToMillis(item.start_time),
+      end: item.end_time ? isoToMillis(item.end_time) : null,
       color: item.color
   }));
   notify();
-  console.log("Test route data:", testSessions);
-  return testSessions;
+  return sessions;
 };
 
+/* ======================================================
+ * READ ACCESS
+ * ====================================================== */
 
-export async function loadTodaySessions() {
-  const res = await fetch('/api/sessions/today', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' }
-  });
-  const data = await res.json();
-
-  sessions = data.map(item => ({
-    start: parseToToday(item.start_time),
-    end: item.end_time ? parseToToday(item.end_time) : null,
-    color: item.color
-  }));
-  notify();
-  console.log("Today's sessions data:", sessions);
+/**
+ * Get current sessions from memory.
+ * Returns the last successfully loaded session data.
+ */
+export function getTodaySessions() {
   return sessions;
 }
 
-export function getTodaySessions() {
-  return testSessions;
-}
+/* ======================================================
+ * PUB/SUB PATTERN
+ * ====================================================== */
 
+/**
+ * Subscribe to session changes.
+ * Callback receives updated sessions array when data loads.
+ * Returns unsubscribe function.
+ */
 export function subscribe(fn) {
   listeners.push(fn);
 
@@ -54,6 +77,10 @@ export function subscribe(fn) {
   };
 }
 
+/**
+ * Notify all subscribers of changes.
+ * Called when new session data is loaded.
+ */
 function notify() {
-  listeners.forEach(fn => fn(testSessions));
+  listeners.forEach(fn => fn(sessions));
 }
