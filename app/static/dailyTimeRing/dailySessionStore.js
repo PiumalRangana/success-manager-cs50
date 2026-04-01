@@ -1,7 +1,29 @@
-import { parseToToday } from "./chartDataPipeline.js";
+import { parseToToday, testParse } from "./chartDataPipeline.js";
 
 let listeners = [];
 let sessions = [];
+
+
+// testing
+let testSessions = [];
+
+export async function callTestRoute() {
+  const res = await fetch('/api/chart/sessions', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  const data = await res.json();
+
+    testSessions = data.map(item => ({
+      start: testParse(item.start_time),
+      end: item.end_time ? testParse(item.end_time) : null,
+      color: item.color
+  }));
+  notify();
+  console.log("Test route data:", testSessions);
+  return testSessions;
+};
+
 
 export async function loadTodaySessions() {
   const res = await fetch('/api/sessions/today', {
@@ -15,12 +37,13 @@ export async function loadTodaySessions() {
     end: item.end_time ? parseToToday(item.end_time) : null,
     color: item.color
   }));
-    notify();
-    return sessions;
+  notify();
+  console.log("Today's sessions data:", sessions);
+  return sessions;
 }
 
 export function getTodaySessions() {
-  return sessions;
+  return testSessions;
 }
 
 export function subscribe(fn) {
@@ -32,5 +55,5 @@ export function subscribe(fn) {
 }
 
 function notify() {
-  listeners.forEach(fn => fn(sessions));
+  listeners.forEach(fn => fn(testSessions));
 }

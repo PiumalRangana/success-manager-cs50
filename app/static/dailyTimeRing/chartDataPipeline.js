@@ -64,8 +64,12 @@ export function buildSegments(sessions, now) {
   sessions.sort((a, b) => a.start - b.start);
 
   for (const s of sessions) {
-    const start = s.start;
+    let start = s.start;
     const end = s.end ?? now;
+
+    if (start < dayStart){
+      start = dayStart;
+    }
 
     // Idle gap before task
     if (cursor < start) {
@@ -155,4 +159,7 @@ export function parseToToday(datetimeStr) {
       
   // milliseconds since midnight
   return new Date().setHours(hour, minute, second, mSeconds);
+}
+export function testParse(dateTimeIsoFormat) {
+  return new Date(dateTimeIsoFormat).getTime();
 }

@@ -4,7 +4,7 @@ from app.helpers import task_text_color
 from  .models import Task, TimeSession
 from . import db
 from datetime import datetime, timedelta, time
-
+from sqlalchemy import or_,and_
 main = Blueprint('main', __name__)
 
 
@@ -250,6 +250,43 @@ def get_today_sessions():
                 if s.end_time else None
             ),
             "color": s.task.color
+        }
+        for s in sessions
+    ])
+
+# send tasks started before today and no end time + started today
+@login_required
+@main.route('/api/chart/sessions')
+def get_time_ring_data():
+    now = datetime.now()
+
+    # Start and end of the current day (local time)
+    today_start = datetime.combine(now.date(), time.min)
+    today_end = datetime.combine(now.date(), time.max)
+    
+    sessions = TimeSession.query.filter(
+        TimeSession.user_id == current_user.id,
+        or_(
+            and_(
+                TimeSession.start_time >= today_start, TimeSession.start_time <= today_end
+            ),
+            and_(
+                TimeSession.start_time < today_start, 
+                or_(TimeSession.end_time == None,
+                     TimeSession.end_time >= today_start),
+            )
+        )
+    ).all()
+    
+    return jsonify([
+        {
+            "start_time": s.start_time.isoformat(),
+            "end_time": (
+                s.end_time.isoformat()
+                if s.end_time else None
+            ),
+            "color": s.task.color,
+            "name": s.task.task_text
         }
         for s in sessions
     ])

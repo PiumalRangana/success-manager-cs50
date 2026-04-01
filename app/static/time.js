@@ -1,4 +1,4 @@
-import { loadTodaySessions } from "./dailyTimeRing/dailySessionStore.js";
+import { loadTodaySessions, callTestRoute} from "./dailyTimeRing/dailySessionStore.js";
 
 // start timer intent
 // send the intention of starting the timer to the server
@@ -19,7 +19,7 @@ function startTimer(taskId) {
     document.querySelectorAll('.timer_button').forEach(btn => {
       btn.disabled = true;
     })
-    loadTodaySessions()
+    callTestRoute()
   })
   .catch(error => {
     console.error('Error starting timer:', error);
@@ -36,7 +36,7 @@ function stopTimer() {
     document.querySelectorAll('.timer_button').forEach(btn => {
       btn.disabled = false;
     })
-    loadTodaySessions()
+    callTestRoute()
   })
   .catch(error => {
     console.error('Error stopping timer:', error);

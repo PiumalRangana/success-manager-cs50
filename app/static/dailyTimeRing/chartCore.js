@@ -15,12 +15,12 @@
 
 import { createChartRenderer } from "./chartRenderer.js";
 import { createChartController } from "./chartController.js";
-import { loadTodaySessions } from "./dailySessionStore.js";
+import { loadTodaySessions, callTestRoute } from "./dailySessionStore.js";
 let controller = null;
 
 async function renderDailyChart() {
   try {
-    await loadTodaySessions()
+    await callTestRoute();
     document.querySelector("#chart").innerHTML = "";
     const renderer = createChartRenderer("#chart");
 
