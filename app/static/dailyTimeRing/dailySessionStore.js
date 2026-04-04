@@ -15,7 +15,12 @@
  * - Contain time calculations
  **********************************************************/
 
-import { isoToMillis } from "./chart/chartDataPipeline.js";
+/* ======================================================
+ * ISO DATETIME → MILLISECONDS
+ * ====================================================== */
+export function isoToMillis(dateTimeIsoFormat) {
+  return new Date(dateTimeIsoFormat).getTime();
+}
 
 /* ======================================================
  * STATE

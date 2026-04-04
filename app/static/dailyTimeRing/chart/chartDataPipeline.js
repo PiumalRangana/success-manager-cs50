@@ -150,9 +150,3 @@ export function formatElapsed(ms) {
 
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
-/* ======================================================
- * ISO DATETIME → MILLISECONDS
- * ====================================================== */
-export function isoToMillis(dateTimeIsoFormat) {
-  return new Date(dateTimeIsoFormat).getTime();
-}
