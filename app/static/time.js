@@ -13,7 +13,7 @@
  * - Calculate time values
  **********************************************************/
 
-import { loadTodaySessions } from "./dailyTimeRing/dailySessionStore.js";
+import { loadTodaySessions } from "./dailyTimeRing/chart/dailySessionStore.js";
 
 /* ======================================================
  * TIMER CONTROL
