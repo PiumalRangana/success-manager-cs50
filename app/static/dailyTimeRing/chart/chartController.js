@@ -16,7 +16,7 @@ import {
   formatTime,
   formatElapsed
 } from "./chartDataPipeline.js";
-import { getTodaySessions, subscribe } from "./dailySessionStore.js";
+import { getTodaySessions, subscribe } from "../dailySessionStore.js";
 
 export function createChartController(renderer) {
 

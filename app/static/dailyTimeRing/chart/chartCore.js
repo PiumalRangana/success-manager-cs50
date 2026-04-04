@@ -17,7 +17,7 @@
 
 import { createChartRenderer } from "./chartRenderer.js";
 import { createChartController } from "./chartController.js";
-import { loadTodaySessions } from "./dailySessionStore.js";
+import { loadTodaySessions } from "../dailySessionStore.js";
 let controller = null;
 
 async function renderDailyChart() {

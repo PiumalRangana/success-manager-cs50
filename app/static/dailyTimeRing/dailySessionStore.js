@@ -15,7 +15,7 @@
  * - Contain time calculations
  **********************************************************/
 
-import { isoToMillis } from "./chartDataPipeline.js";
+import { isoToMillis } from "./chart/chartDataPipeline.js";
 
 /* ======================================================
  * STATE
