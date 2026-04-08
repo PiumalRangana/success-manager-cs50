@@ -47,7 +47,8 @@ export async function loadTodaySessions() {
     sessions = data.map(item => ({
       start: isoToMillis(item.start_time),
       end: item.end_time ? isoToMillis(item.end_time) : null,
-      color: item.color
+      color: item.color,
+      name: item.name
   }));
   notify();
   return sessions;

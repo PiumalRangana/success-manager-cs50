@@ -6,9 +6,8 @@
 <script type="module" src="../static/time.js"></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script type="module"
-        src="{{ url_for('static', filename='dailyTimeRing/chart/chartCore.js') }}">
+        src="{{ url_for('static', filename='home.js') }}">
 </script>
-
 <header class="siteHeader">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
@@ -67,6 +66,7 @@
                 {% endif %}
 
                 <div class="chart" id="chart"></div>
+                <div class="legend" id="legend"></div>
                 <!--legand-->
             </div>
         </div>

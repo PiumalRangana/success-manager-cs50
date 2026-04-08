@@ -22,7 +22,6 @@ let controller = null;
 
 async function renderDailyChart() {
   try {
-    await loadTodaySessions();
     document.querySelector("#chart").innerHTML = "";
     const renderer = createChartRenderer("#chart");
 
@@ -36,4 +35,6 @@ async function renderDailyChart() {
   }
 }
 
-renderDailyChart();
+export{
+  renderDailyChart
+};
