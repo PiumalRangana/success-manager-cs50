@@ -1,11 +1,14 @@
 import { createLegendRenderer } from "./legendRenderer.js";
 import { getLegendData } from "./legendPipeline.js";
-import { getTodaySessions } from "../dailySessionStore.js";
+import { getTodaySessions, subscribe } from "../dailySessionStore.js";
 
 export function initLegend(){
     let todaySessions = getTodaySessions();
-    createLegendRenderer("#legend");
     const legendData = getLegendData(todaySessions);
-    console.log("legendData:", legendData);
-}
+    createLegendRenderer("#legend", legendData);
 
+    subscribe((sessions) => {
+        const legendData = getLegendData(sessions);
+        createLegendRenderer("#legend", legendData);
+    });
+}

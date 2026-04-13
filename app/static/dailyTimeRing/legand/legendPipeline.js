@@ -1,19 +1,21 @@
-
-
 // make a object of tasks with task name as key and total time as value returned by getLegendData
+
 export function getLegendData(todaySessions) {
     let tasks = {};
     for (let session of todaySessions) {
-
-        if (!session.end) {
-            console.log("continue session:", session);
-            continue};
-
+        let taskTime
         if (!tasks[session.name]) {
-            tasks[session.name] = 0;
-            console.log("new task:", session.name);
+            tasks[session.name] = { time: 0, color: session.color};
         }
-        tasks[session.name] += session.end - session.start;
+        if (session.end) {
+            taskTime =  session.end - session.start;
+        }
+
+        else {
+            taskTime = Date.now() - session.start;
+        }
+
+        tasks[session.name].time += taskTime;
     }
 
     const idleTime = calculateIdleTime(
@@ -26,12 +28,11 @@ export function getLegendData(todaySessions) {
     };
 }
 
-
 function calculateTotatalWorkingTime(tasks){
     let totalWorkingTime = 0;
 
     for (let taskName in tasks) {
-        totalWorkingTime += tasks[taskName];
+        totalWorkingTime += tasks[taskName].time;
     }
 
     return totalWorkingTime
