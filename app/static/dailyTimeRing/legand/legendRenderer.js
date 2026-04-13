@@ -5,18 +5,20 @@ export function createLegendRenderer(containerSelector, legendData) {
         <h3>Legend</h3>`
     for (let task in legendData.tasks) {
         html += `
-                <div class="legend-item" style="background-color: ${legendData.tasks[task].color};">
-                    <span class="legend-details">${task}: ${milisecondToTime(legendData.tasks[task].time)}
-                    </span>
-                </div>
-            `;
+        <div class="legend-item ${legendData.tasks[task].is_active ? "active" : ""}">
+            <span class="legend-color" style="background-color: ${legendData.tasks[task].color};"></span>
+            <span class="legend-name">${task}</span>
+            <span class="legend-time">${milisecondToTime(legendData.tasks[task].time)}</span>
+        </div>
+`;
     }
     html += `
-        <div class="legend-item" style="background-color: #ddd;">
-            <span class="legend-details">
-                Idle: ${milisecondToTime(legendData.idleTime)}
-            </span>
-        </div>`;
+        <div class="legend-item">
+            <span class="legend-color" style="background-color: #ddd;"></span>
+            <span class="legend-name">Idle</span>
+            <span class="legend-time">${milisecondToTime(legendData.idleTime)}</span>
+        </div>
+`;
 
     container.innerHTML = html;
 }

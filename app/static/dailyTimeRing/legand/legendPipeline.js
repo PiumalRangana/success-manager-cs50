@@ -5,7 +5,7 @@ export function getLegendData(todaySessions) {
     for (let session of todaySessions) {
         let taskTime
         if (!tasks[session.name]) {
-            tasks[session.name] = { time: 0, color: session.color};
+            tasks[session.name] = { time: 0, color: session.color, is_active: false };
         }
         if (session.end) {
             taskTime =  session.end - session.start;
@@ -13,6 +13,7 @@ export function getLegendData(todaySessions) {
 
         else {
             taskTime = Date.now() - session.start;
+            tasks[session.name].is_active = true;
         }
 
         tasks[session.name].time += taskTime;
