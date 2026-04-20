@@ -2,12 +2,17 @@ import { createLegendRenderer } from "./legendRenderer.js";
 import { getLegendData } from "./legendPipeline.js";
 import { getTodaySessions, subscribe } from "../dailySessionStore.js";
 
-export function initLegend(){
-    let initialSessions = getTodaySessions();
-    convertDataAndRender(initialSessions);
+function updateLegend() {
+    const sessions = getTodaySessions();
+    const legendData = getLegendData(sessions);
+    createLegendRenderer("#legend", legendData);
+}
 
-    subscribe((sessions) => {
-        convertDataAndRender(sessions);
+export function initLegend(){
+    updateLegend();
+
+    subscribe(() => {
+        updateLegend();
     });
 
     startLegendLoop();
@@ -19,8 +24,7 @@ function startLegendLoop() {
     if (intervalId) return;
 
     intervalId = setInterval(() => {
-        const sessions = getTodaySessions();
-        convertDataAndRender(sessions);
+        updateLegend();
     }, 1000);
 }
 
@@ -31,7 +35,3 @@ function stopLegendLoop() {
     }
 }
 
-function convertDataAndRender(sessions) {
-        const legendData = getLegendData(sessions);
-        createLegendRenderer("#legend", legendData);
-}

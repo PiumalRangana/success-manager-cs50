@@ -33,7 +33,6 @@ footer {
 }
 
 .legend {
-    margin: 20px auto;
     padding: 15px;
     background: #1e1e1e;
     border-radius: 10px;
@@ -52,8 +51,9 @@ footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 5px;
+    padding: 6px 8px;
     border-bottom: 1px solid #333;
+    font-size: 14px;
 }
 
 .legend-item:last-child {
