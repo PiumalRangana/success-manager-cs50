@@ -1,4 +1,5 @@
-export function createLegendRenderer(containerSelector, legendData) {
+// Renders full legend UI (used on initial load and data changes)
+function createLegendRenderer(containerSelector, legendData) {
     console.log("Creating legend renderer with data:", legendData);
     let container = document.querySelector(containerSelector);
     let html = `
@@ -13,18 +14,42 @@ export function createLegendRenderer(containerSelector, legendData) {
 `;
     }
     html += `
-        <div class="legend-item">
+        <div class="legend-item" id="idle-time">
             <span class="legend-color" style="background-color: #ddd;"></span>
             <span class="legend-name">Idle</span>
             <span class="legend-time">${milisecondToTime(legendData.idleTime)}</span>
         </div>
 `;
-
     container.innerHTML = html;
 }
+
+// Converts milliseconds to readable time format (hh mm ss)
 function milisecondToTime(ms) {
     let seconds = Math.floor((ms / 1000) % 60);
     let minutes = Math.floor((ms / (1000 * 60)) % 60);
     let hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
     return `${hours}h ${minutes}m ${seconds}s`;
 }
+
+// Updates ONLY the active task time (called every second)
+function updateActiveTime(time) {
+    const el = document.querySelector(`.legend-item.active .legend-time`);
+    if (el) {
+        el.textContent = milisecondToTime(time);
+    }
+}
+
+// Updates ONLY the idle time (called when no task is active)
+function updateIdleTime(time) {
+    const el = document.querySelector(`#idle-time .legend-time`);
+    if (el) {
+        el.textContent = milisecondToTime(time);
+    }
+}
+
+export { 
+    milisecondToTime,
+    createLegendRenderer,
+    updateActiveTime,
+    updateIdleTime
+ };
