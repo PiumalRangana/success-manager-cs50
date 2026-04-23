@@ -1,4 +1,9 @@
 // make a object of tasks with task name as key and total time as value returned by getLegendData
+const now = Date.now();
+
+let todayStart = new Date();
+todayStart.setHours(0, 0, 0, 0);
+todayStart = todayStart.getTime();
 
 export function getLegendData(todaySessions) {
     let tasks = {};
@@ -7,12 +12,14 @@ export function getLegendData(todaySessions) {
         if (!tasks[session.name]) {
             tasks[session.name] = { time: 0, color: session.color, is_active: false };
         }
+        const effectiveStart = Math.max(session.start, todayStart);
+
         if (session.end) {
-            taskTime =  session.end - session.start;
+            taskTime =  session.end - effectiveStart;
         }
 
         else {
-            taskTime = Date.now() - session.start;
+            taskTime = Date.now() - effectiveStart;
             tasks[session.name].is_active = true;
         }
 
