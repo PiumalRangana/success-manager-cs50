@@ -259,3 +259,8 @@ def get_time_ring_data():
         }
         for s in sessions
     ])
+
+@login_required
+@main.route('/analytics')
+def get_analytics_page():
+    return render_template("analytics.html")
