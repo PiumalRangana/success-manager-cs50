@@ -90,5 +90,7 @@
                 class="text-primary p-1 text-decoration-none">Login</a>
         </div>
     </main>
-
+{% block scripts %}
+    <script src="{{ url_for('static', filename='script.js')}}"></script>
+{% endblock %}
 {% endblock %}
