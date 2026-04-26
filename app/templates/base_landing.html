@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block nav_buttons %}
+<a class="btn btn-outline-light w-100 w-lg-auto text-decoration-none" href="{{ url_for('main.login') }}">Log in</a>
+<a class="btn btn-primary w-100 w-lg-auto text-decoration-none" href="{{ url_for('auth.register') }}">Register</a>
+{% endblock %}
+
+{% block body %}
+<main>
+    {% block content %}{% endblock %}
+</main>
+{% endblock %}
