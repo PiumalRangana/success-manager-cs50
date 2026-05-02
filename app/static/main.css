@@ -71,6 +71,12 @@ footer {
 .legend-name {
     flex: 1;
     font-size: 14px;
+    min-width: 0;
+    word-break: break-word;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .legend-time {
@@ -107,8 +113,29 @@ footer {
     scrollbar-color: #888 transparent;
 }
 
+.legend-item{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 .chart-wrapper {
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
+}
+
+.list-group-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.list-group-item span {
+  flex: 1;
+  min-width: 0;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
