@@ -38,6 +38,7 @@ footer {
     border-radius: 10px;
     color: #fff;
     max-height: 300px;
+    width: 100%;
     overflow-y: auto;
 }
 
@@ -104,4 +105,10 @@ footer {
 .legend {
     scrollbar-width: thin;
     scrollbar-color: #888 transparent;
+}
+
+.chart-wrapper {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
 }
