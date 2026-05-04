@@ -2,12 +2,14 @@ import { createLegendRenderer } from "./legendRenderer.js";
 import { getLegendData } from "./legendPipeline.js";
 import { getTodaySessions, subscribe } from "../dailySessionStore.js";
 import { updateActiveTime, updateIdleTime } from "./legendRenderer.js";
+import { applyConditionalTooltip } from "../../utils/domUtils.js";
 
 // Initial full render of legend
 function initDraw() {
     const sessions = getTodaySessions();
     const legendData = getLegendData(sessions);
     createLegendRenderer("#legend", legendData);
+    applyConditionalTooltip(".legend-name");
 }
 
 // Runs every second to update only dynamic parts (active task or idle)
