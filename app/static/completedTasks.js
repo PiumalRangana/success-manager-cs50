@@ -1,2 +1,2 @@
-import { applyConditionalTooltip } from "./utils/domUtils.js";
-applyConditionalTooltip(".task-text");
+import { applyTextOverflowHelpers } from "./utils/domUtils.js";
+applyTextOverflowHelpers(".task-text");

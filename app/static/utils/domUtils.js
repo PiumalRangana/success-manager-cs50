@@ -1,4 +1,4 @@
-export function applyConditionalTooltip(selector) {
+function applyConditionalTooltip(selector) {
   const elements = document.querySelectorAll(selector);
 
   elements.forEach(el => {
@@ -8,4 +8,20 @@ export function applyConditionalTooltip(selector) {
       el.removeAttribute("title");
     }
   });
+}
+
+function enableWhiteSpaceToggle(selector) {
+  const elements = document.querySelectorAll(selector);
+
+  elements.forEach(el => {
+    el.addEventListener("click", () => {
+      const currentWhiteSpace = window.getComputedStyle(el).whiteSpace;
+      el.style.whiteSpace = currentWhiteSpace === "normal" ? "nowrap" : "normal";
+    });
+  });
+}
+
+export function applyTextOverflowHelpers(selector) {
+  applyConditionalTooltip(selector);
+  enableWhiteSpaceToggle(selector);
 }
