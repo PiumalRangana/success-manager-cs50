@@ -1,0 +1,26 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container-fluid">
+
+        <!-- Logo -->
+        {% include 'components/brand.html' %}
+
+        <!--Toggle button-->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Right side buttons -->
+            <div class="ms-md-auto">
+                <!--log out button-->
+                <div class="d-flex flex-column flex-md-row justify-content-center justify-content-md-end 
+                    align-items-center gap-2">
+
+                    {{ nav_buttons | safe }}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -16,9 +16,12 @@ export function createChartRenderer(containerSelector) {
   /* ======================================================
   * CONFIG / DIMENSIONS
   * ====================================================== */
+  const container = document.querySelector(containerSelector);
+  const size = container.parentElement.clientWidth;
+  console.log("Chart size:", size);
 
-  const WIDTH = 400;
-  const HEIGHT = 400;
+  const WIDTH = size;
+  const HEIGHT = size;
   const RADIUS = Math.min(WIDTH, HEIGHT) / 2;
 
   /* ======================================================

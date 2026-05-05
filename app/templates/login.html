@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "base_public.html" %}
 {% block title %}Login | Success Manager{% endblock %}
 
 {% block content %}
@@ -66,4 +66,7 @@
             </div>
         </section>
     </main>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ url_for('static', filename='script.js')}}"></script>
 {% endblock %}

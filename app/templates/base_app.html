@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block body %}
+{% set nav_buttons %}
+
+<!--HOME BUTTON-->
+<a class="btn btn-outline-light w-100 w-lg-auto text-decoration-none" href="{{ url_for('main.home') }}">Home</a>
+
+<!--ADD TASKS BUTTON-->
+<a class="btn btn-outline-light w-100 w-lg-auto text-decoration-none" href="{{ url_for('main.add_task') }}">Add
+    tasks</a>
+
+<!--Completed tasks button-->
+<a class="btn btn-outline-light w-100 w-lg-auto px-4 text-decoration-none"
+    href="{{ url_for('main.completed_tasks') }}">Completed Tasks</a>
+
+<!--log out button-->
+<a class="btn btn-outline-light w-100 w-lg-auto px-4 text-decoration-none" href="{{ url_for('auth.logout') }}">Log
+    out</a>
+
+{% endset %}
+
+<header class="siteHeader">
+    <!-- Navigation -->
+    {% include 'components/navBar.html' %}
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+{% endblock %}

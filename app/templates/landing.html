@@ -1,109 +1,72 @@
-{% extends "layout.html" %}
-{% block title %}Home  | Success Manager{% endblock %}
-
+{% extends "base_landing.html" %}
+{% block title %}Home | Success Manager{% endblock %}
 {% block content %}
-    <div class="d-flex flex-column min-vh-100 bg-dark">
-        <!-- ================= Navbar ================= -->
-        <header class="siteHeader">
-            <!-- Navigation --> 
-            <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-                <div class="container-fluid">
-
-                    <!-- Brand -->
-                    <a class="navbar-brand text-decoration-none px-2" href="/">
-                        <i class="bi bi-check-circle-fill p-1" aria-hidden="true"></i>
-                        Success Manager
-                    </a>
-                    <!--Toggle button-->
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <!-- Right side buttons -->
-                        <div class="ms-md-auto">
-                            <div
-                                class="d-flex flex-column flex-md-row justify-content-center justify-content-md-end align-items-center gap-2">
-                                <a class="btn btn-outline-light w-100 w-lg-auto px-4 text-decoration-none"
-                                    href="{{ url_for('main.login') }}">Log
-                                    in</a>
-                                <a class="btn btn-primary w-100 w-lg-auto px-4 text-decoration-none"
-                                    href="{{ url_for('auth.register') }}">Register</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </header>
-
-            <!-- ================= Hero Section ================= -->
-            <section class="py-5 text-center bg-dark text-light">
-                <div class="container">
-                    <h1 class="display-4 fw-bold">Take Control of<br>Your Time & Tasks</h1>
-                    <p class="lead mb-4">
-                        Track your work, manage your schedule, and boost productivity with powerful charts &amp; timers.
-                    </p>
-                    <div class="d-flex flex-row justify-content-center gap-3">
-                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4">Register now</a>
-                        <a href="{{ url_for('main.login') }}" class="btn btn-secondary btn-lg px-4">Log in</a>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ================= Features Section ================= -->
-            <section class="py-3 bg-dark text-light">
-                <div class="container">
-                    <div class="row g-4 justify-content-center">
-
-                        <!-- Card 1 -->
-                        <div class="col-md-4">
-                            <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
-                                <div class="mb-3 fs-1">
-                                    <i class="bi bi-stopwatch"></i>
-                                </div>
-                                <h5 class="fw-bold">Smart Timers</h5>
-                                <p class="mb-0">Start, pause; and track time effortlessly</p>
-                            </div>
-                        </div>
-
-                        <!-- Card 2 -->
-                        <div class="col-md-4">
-                            <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
-                                <div class="mb-3 fs-1">
-                                    <i class="bi bi-bar-chart-fill"></i>
-                                </div>
-                                <h5 class="fw-bold">Visual Progress</h5>
-                                <p class="mb-0">Beautiful charts to show your work patterns</p>
-                            </div>
-                        </div>
-
-                        <!-- Card 3 -->
-                        <div class="col-md-4">
-                            <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
-                                <div class="mb-3 fs-1">
-                                    <i class="bi bi-check2-square"></i>
-                                </div>
-                                <h5 class="fw-bold">Flexible Task Management</h5>
-                                <p class="mb-0">Add, organize, and prioritize tasks</p>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </section>
-
-            <!-- ================= Why It's Useful Section ================= -->
-            <section class="py-5 bg-dark text-light text-center">
-                <div class="container">
-                    <h2 class="fw-bold mb-4">Why it's useful</h2>
-                    <p class="lead mb-5">
-                        Whether you're a student, freelancer, or entrepreneur, Success Manager keeps you
-                        accountable and helps you achieve more with less stress.
-                    </p>
-                    <h4 class="fw-semibold mb-4">Ready to start managing your success?</h4>
-                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4">Register now</a>
-                </div>
-            </section>
+<!-- ================= Hero Section ================= -->
+<section class="py-5 text-center bg-dark text-light">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Take Control of<br>Your Time & Tasks</h1>
+        <p class="lead mb-4">
+            Track your work, manage your schedule, and boost productivity with powerful charts &amp; timers.
+        </p>
+        <div class="d-flex flex-row justify-content-center gap-3">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4">Register now</a>
+            <a href="{{ url_for('main.login') }}" class="btn btn-secondary btn-lg px-4">Log in</a>
+        </div>
     </div>
+</section>
+
+<!-- ================= Features Section ================= -->
+<section class="py-3 bg-dark text-light">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+
+            <!-- Card 1 -->
+            <div class="col-md-4">
+                <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
+                    <div class="mb-3 fs-1">
+                        <i class="bi bi-stopwatch"></i>
+                    </div>
+                    <h5 class="fw-bold">Smart Timers</h5>
+                    <p class="mb-0">Start, pause; and track time effortlessly</p>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col-md-4">
+                <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
+                    <div class="mb-3 fs-1">
+                        <i class="bi bi-bar-chart-fill"></i>
+                    </div>
+                    <h5 class="fw-bold">Visual Progress</h5>
+                    <p class="mb-0">Beautiful charts to show your work patterns</p>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col-md-4">
+                <div class="card h-100 card-bg text-light text-center border-0 shadow-sm rounded-3 p-4">
+                    <div class="mb-3 fs-1">
+                        <i class="bi bi-check2-square"></i>
+                    </div>
+                    <h5 class="fw-bold">Flexible Task Management</h5>
+                    <p class="mb-0">Add, organize, and prioritize tasks</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ================= Why It's Useful Section ================= -->
+<section class="py-5 bg-dark text-light text-center">
+    <div class="container">
+        <h2 class="fw-bold mb-4">Why it's useful</h2>
+        <p class="lead mb-5">
+            Whether you're a student, freelancer, or entrepreneur, Success Manager keeps you
+            accountable and helps you achieve more with less stress.
+        </p>
+        <h4 class="fw-semibold mb-4">Ready to start managing your success?</h4>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4">Register now</a>
+    </div>
+</section>
 {% endblock %}
