@@ -1,9 +1,94 @@
 {% extends "base_app.html" %}
 
 {% block title %}
-    Analytics
+Analytics
 {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='analytics.css') }}">
+{% endblock %}
+
 {% block content %}
-    <h1>Analytics</h1>
-    <p>Here you can view your analytics data.</p>
+<div class="container-fluid" id="analytics-container">
+    <!-- Header and Range select options -->
+    <div class="row justify-content-between px-0 mx-0" id="header-row">
+
+        <!-- Title -->
+        <div class="col-12 col-md-4">
+            <div class="header-text">
+                <h5>Charts & Insights</h5>
+                <p class="sub-header">Visualize your time, tasks and productivity patterns</p>
+            </div>
+        </div>
+
+        <!-- Range select options -->
+        <div class="col-12 col-md-6">
+            <div id="button-group">
+                <div class="calendar-selector">
+                    calendar selector
+                </div>
+                <div class="day-selector">
+                    day selector
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 small cards of basic analytics -->
+    <div class="row gx-3 gy-1 p-2 text-center" id="basic-analytics-row">
+        <div class="col-6 col-md-3 ">
+            <div class="small-card" id="total-focus-time">
+                <div class="chart-title">total-focus-time</div>
+                <div class="chart-body"></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="small-card" id="average-daily-focus">
+                <div class="chart-title">average-daily-focus</div>
+                <div class="chart-body"></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="small-card" id="task-completed">
+                <div class="chart-title">Task-completed</div>
+                <div class="chart-body"></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="small-card" id="total-sessions">
+                <div class="chart-title">total-sessions</div>
+                <div class="chart-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 big analytic cards -->
+    <div class="row gx-3 gy-1 p-2 text-center" id="main-analytics">
+        <div class="col-12 col-md-6">
+            <div class="chart-card" id="total-focus-bar-chart">
+                <div class="chart-title">total-focus-bar-chart</div>
+                <div class="chart-body"></div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="chart-card" id="time-per-task">
+                <div class="chart-title">time-per-task</div>
+                <div class="chart-body"></div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="chart-card" id="total-distribution-focus">
+                <div class="chart-title">total-distribution-focus</div>
+                <div class="chart-body"></div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <div class="chart-card" id="insights">
+                <div class="chart-title">insights</div>
+                <div class="chart-body"></div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
