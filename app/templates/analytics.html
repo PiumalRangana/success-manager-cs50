@@ -6,6 +6,7 @@ Analytics
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='analytics/calendar-selector/calendar-selector.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -24,9 +25,7 @@ Analytics
         <!-- Range select options -->
         <div class="col-12 col-md-6">
             <div id="button-group">
-                <div class="calendar-selector">
-                    calendar selector
-                </div>
+                <div class="calendar-selector" id="calendar-selector"></div>
                 <div class="day-selector">
                     day selector
                 </div>
@@ -91,4 +90,7 @@ Analytics
         </div>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='analytics/calendar-selector/calendar-selector.js') }}"></script>
 {% endblock %}

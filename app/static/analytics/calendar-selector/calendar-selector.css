@@ -1,0 +1,40 @@
+.dropdown-button  {
+    width: 100%;
+    min-height: 38px;
+    border-radius: 5px;
+    background-color: #0D1623;
+    color: #BFC8D2;
+    padding: 5px 2px;
+    transition: background-color 180ms ease-in-out, transform 180ms ease-in-out, box-shadow 180ms ease-in-out;
+}
+.dropdown-button:hover {
+    background-color: #142236;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px rgba(13, 22, 35, 0.18);
+}
+
+#calendar-selector {
+  container-type: inline-size;
+}
+
+.dropdown-button {
+  font-size: 1rem; /* default */
+}
+
+@container (max-width: 160.9px) {
+  .dropdown-button {
+    font-size: 0.6rem;
+  }
+}
+
+@container (min-width: 161px) and (max-width: 191.9px) {
+  .dropdown-button {
+    font-size: 0.8rem;
+  }
+}
+
+@container (min-width: 192px) {
+  .dropdown-button {
+    font-size: 1rem;
+  }
+}
