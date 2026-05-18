@@ -1,3 +1,9 @@
+/*
+=====================================
+Render Functions
+=====================================
+*/
+
 function createCalendarSelectorButton() {
     return`
         <button type="button" class="btn dropdown-button"  data-bs-toggle="modal" data-bs-target="#calendar-selector-form-modal">
@@ -45,15 +51,36 @@ function createCalendarSelectorModal() {
     </div>`
 };
 
+
+/*
+=====================================
+DOM Injection
+=====================================
+*/
+
+
 const modalContainer = document.querySelector('#calendar-selector-form-modal-container');
 modalContainer.innerHTML = createCalendarSelectorModal();
 
 const container = document.querySelector('#calendar-selector');
 container.innerHTML = createCalendarSelectorButton();
 
-// Initialize flatpickr AFTER DOM elements are created
+
+/*
+=====================================
+DOM References
+=====================================
+*/
+
 const startInput = document.querySelector("#start-date");
 const endInput = document.querySelector("#end-date");
+
+
+/*
+=====================================
+Flatpickr Initialization
+=====================================
+*/
 
 const fp = flatpickr("#calendar-container", {
     inline: true,
@@ -79,8 +106,14 @@ const fp = flatpickr("#calendar-container", {
     }
 });
 
-startInput.addEventListener("change", function () {
 
+/*
+=====================================
+Event Handlers
+=====================================
+*/
+
+function handleStartDateChange() {
     const endDate = fp.selectedDates[1];
 
     fp.setDate([
@@ -90,10 +123,9 @@ startInput.addEventListener("change", function () {
     endInput.disabled = !startInput.value;
 
     console.log("Start date changed:", fp.selectedDates);
-});
+}
 
-endInput.addEventListener("change", function () {
-
+function handleEndDateChange() {
     const startDate = fp.selectedDates[0];
 
     fp.setDate([
@@ -101,5 +133,15 @@ endInput.addEventListener("change", function () {
         endInput.value
     ]);
     console.log("End date changed:", fp.selectedDates);
-});
+}
+
+
+/*
+=====================================
+Event Listeners
+=====================================
+*/
+
+startInput.addEventListener("change", handleStartDateChange);
+endInput.addEventListener("change", handleEndDateChange);
 
