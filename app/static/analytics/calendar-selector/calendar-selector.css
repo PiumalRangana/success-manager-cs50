@@ -38,3 +38,12 @@
     font-size: 1rem;
   }
 }
+
+.flatpickr-calendar{
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
+.modal-body {
+    overflow-x: auto;
+}

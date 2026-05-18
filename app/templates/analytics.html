@@ -7,6 +7,9 @@ Analytics
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics/calendar-selector/calendar-selector.css') }}">
+<link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 {% endblock %}
 
 {% block content %}
@@ -32,6 +35,7 @@ Analytics
             </div>
         </div>
     </div>
+    <div id="calendar-selector-form-modal-container"></div>
 
     <!-- 4 small cards of basic analytics -->
     <div class="row gx-3 gy-1 p-2 text-center" id="basic-analytics-row">
