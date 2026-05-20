@@ -44,7 +44,7 @@ function createCalendarSelectorModal() {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Apply</button>
+                    <button type="submit" class="btn btn-primary" id="apply-date-range" onclick="applyDateRange()" disabled>Apply</button>
                 </div>
             </div>
         </div>
@@ -74,6 +74,7 @@ DOM References
 
 const startInput = document.querySelector("#start-date");
 const endInput = document.querySelector("#end-date");
+const applyButton = document.querySelector("#apply-date-range");
 
 
 /*
@@ -86,24 +87,11 @@ const fp = flatpickr("#calendar-container", {
     inline: true,
     mode: "range",
     dateFormat: "Y-m-d",
-    
-    onChange(selectedDates) {
-        if (selectedDates[0]) {
-            startInput.value = fp.formatDate(selectedDates[0], "Y-m-d");
-            endInput.disabled = false;
-        }
-        else {
-            startInput.value = "";
-            endInput.disabled = true;
-        }
 
-        if (selectedDates[1]) {
-            endInput.value = fp.formatDate(selectedDates[1], "Y-m-d");
-        }
-        else {
-            endInput.value = "";
-        }
+    onChange(selectedDates) {
+        applyCalendarDatesToInputs(selectedDates);
     }
+
 });
 
 
@@ -121,6 +109,10 @@ function handleStartDateChange() {
         endDate
     ]);
     endInput.disabled = !startInput.value;
+    if (!startInput.value) {
+        endInput.value = "";
+        applyButton.disabled = true;
+    }
 
     console.log("Start date changed:", fp.selectedDates);
 }
@@ -129,9 +121,10 @@ function handleEndDateChange() {
     const startDate = fp.selectedDates[0];
 
     fp.setDate([
-        startDate ? startDate : null,
+        startDate || null,
         endInput.value
     ]);
+    applyButton.disabled = !isValidDateRange();
     console.log("End date changed:", fp.selectedDates);
 }
 
@@ -145,3 +138,43 @@ Event Listeners
 startInput.addEventListener("change", handleStartDateChange);
 endInput.addEventListener("change", handleEndDateChange);
 
+
+/*
+=====================================
+Utility Functions
+=====================================
+*/
+
+function applyDateRange() {
+    const startDate = fp.selectedDates[0];
+    const endDate = fp.selectedDates[1];
+    if (startDate && endDate) {
+        console.log("Applying date range:", startDate, endDate);
+    }
+}
+
+function isValidDateRange() {
+    const startDate = fp.selectedDates[0];
+    const endDate = fp.selectedDates[1];
+    return startDate && endDate && startDate <= endDate;
+}
+
+function applyCalendarDatesToInputs(selectedDates) {
+    if (selectedDates[0]) {
+        startInput.value = fp.formatDate(selectedDates[0], "Y-m-d");
+        endInput.disabled = false;
+    }
+    else {
+        startInput.value = "";
+        endInput.disabled = true;
+    }
+
+    if (selectedDates[1]) {
+        endInput.value = fp.formatDate(selectedDates[1], "Y-m-d");
+        applyButton.disabled = !isValidDateRange();
+    }
+    else {
+        endInput.value = "";
+        applyButton.disabled = true;
+    }
+}
