@@ -1,3 +1,4 @@
+import { applyDateRange } from '../analyticsController.js';
 /*
 =====================================
 Render Functions
@@ -44,7 +45,7 @@ function createCalendarSelectorModal() {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="apply-date-range" onclick="applyDateRange()" disabled>Apply</button>
+                    <button type="submit" class="btn btn-primary" id="apply-date-range" disabled>Apply</button>
                 </div>
             </div>
         </div>
@@ -113,8 +114,6 @@ function handleStartDateChange() {
         endInput.value = "";
         applyButton.disabled = true;
     }
-
-    console.log("Start date changed:", fp.selectedDates);
 }
 
 function handleEndDateChange() {
@@ -125,7 +124,6 @@ function handleEndDateChange() {
         endInput.value
     ]);
     applyButton.disabled = !isValidDateRange();
-    console.log("End date changed:", fp.selectedDates);
 }
 
 
@@ -138,20 +136,20 @@ Event Listeners
 startInput.addEventListener("change", handleStartDateChange);
 endInput.addEventListener("change", handleEndDateChange);
 
+applyButton.addEventListener("click", () => {
+
+    const startDate = fp.formatDate(fp.selectedDates[0], "Y-m-d");
+    const endDate = fp.formatDate(fp.selectedDates[1], "Y-m-d");
+    
+    applyDateRange([startDate, endDate]);
+});
+
 
 /*
 =====================================
 Utility Functions
 =====================================
 */
-
-function applyDateRange() {
-    const startDate = fp.selectedDates[0];
-    const endDate = fp.selectedDates[1];
-    if (startDate && endDate) {
-        console.log("Applying date range:", startDate, endDate);
-    }
-}
 
 function isValidDateRange() {
     const startDate = fp.selectedDates[0];

@@ -264,3 +264,28 @@ def get_time_ring_data():
 @main.route('/analytics')
 def get_analytics_page():
     return render_template("analytics.html")
+
+@login_required
+@main.route('/api/analytics/sessions')
+def get_sessions_for_date_range():
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+
+    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
+    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
+
+    sessions = TimeSession.query.filter(
+        TimeSession.user_id == current_user.id,
+        TimeSession.start_time >= start_date_obj,
+        TimeSession.start_time <= end_date_obj
+    ).all()
+
+    return jsonify([
+        {
+            "start_time": s.start_time,
+            "end_time": s.end_time if s.end_time else None,
+            "color": s.task.color,
+            "name": s.task.task_text
+        }
+        for s in sessions
+    ])
