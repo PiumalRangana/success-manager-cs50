@@ -1,0 +1,48 @@
+#date-range-selector{
+    display: flex;
+    width: 100%;
+    min-height: 38px;
+    border-radius: 5px;
+    background-color: #0D1623;
+}
+#date-range-selector> button{
+    flex: 1;
+    border-radius: 5px;
+    background-color: transparent;
+    color: #BFC8D2;
+    border: none;
+    padding: 5px 2px;
+    transition: background-color 180ms ease-in-out, transform 180ms ease-in-out, box-shadow 180ms ease-in-out;
+}
+#date-range-selector> button:hover {
+    background-color: #142236;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px rgba(13, 22, 35, 0.18);
+}
+#date-range-selector> button.active {
+    background-color: #255BD8;
+    transform: translateY(0);
+    box-shadow: 0 5px 15px rgba(13, 22, 35, 0.18);
+}
+
+#date-range-selector{
+  container-type: inline-size;
+}
+
+@container (max-width: 160.9px) {
+  #date-range-selector> button {
+    font-size: 0.6rem;
+  }
+}
+
+@container (min-width: 161px) and (max-width: 191.9px) {
+  #date-range-selector> button {
+    font-size: 0.8rem;
+  }
+}
+
+@container (min-width: 192px) {
+  #date-range-selector> button {
+    font-size: 1rem;
+  }
+}

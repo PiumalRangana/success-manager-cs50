@@ -8,6 +8,7 @@ Analytics
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics/calendar-selector/calendar-selector.css') }}">
 <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='analytics/date-range-selector/dateRangeSelector.css') }}">
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 {% endblock %}
@@ -29,9 +30,7 @@ Analytics
         <div class="col-12 col-md-6">
             <div id="button-group">
                 <div class="calendar-selector" id="calendar-selector"></div>
-                <div class="day-selector">
-                    day selector
-                </div>
+                <div class="date-range-selector" id="date-range-selector"></div>
             </div>
         </div>
     </div>
@@ -97,4 +96,5 @@ Analytics
 {% endblock %}
 {% block scripts %}
 <script type="module" src="{{ url_for('static', filename='analytics/calendar-selector/calendar-selector.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='analytics/date-range-selector/dateRangeSelector.js') }}"></script>
 {% endblock %}
