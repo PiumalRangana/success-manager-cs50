@@ -2,32 +2,16 @@ import { applyDateRange } from '../analyticsController.js';
 
 /*
 =====================================
-DOM References
-=====================================
-*/
-
-const dateRangeSelectorContainer = document.getElementById("date-range-selector");
-
-
-/*
-=====================================
-Configuration
-=====================================
-*/
-const RANGE_OPTIONS = ["1D", "1W", "1M", "3M", "6M", "1Y"];
-
-/*
-=====================================
 Render Functions
 =====================================
 */
 
-function createDateRangeSelectorButtons() {
+function createDateRangeSelectorButtons(RANGE_OPTIONS, container) {
     for (let i = 0; i < RANGE_OPTIONS.length; i++) {
         const button = document.createElement("button");
         button.value = RANGE_OPTIONS[i];
         button.innerHTML = `<small>${RANGE_OPTIONS[i]}</small>`;
-        dateRangeSelectorContainer.appendChild(button);
+        container.appendChild(button);
     }
 }
 
@@ -82,6 +66,8 @@ Event Handlers
 function handleRangeButtonClick(event) {
     const selectedButton = event.currentTarget;
 
+    const buttons = document.querySelectorAll("#date-range-selector > button");
+
     buttons.forEach(button =>
         button.classList.remove("active")
     );
@@ -106,20 +92,35 @@ Utility Functions
 function formatDate(date) {
     return date.toISOString().split("T")[0];
 }
-/*
-=====================================
-Initialization
-=====================================
-*/
 
-createDateRangeSelectorButtons();
 
-const buttons =
+
+
+export function renderDateRangeSelector() {
+    /*
+    =====================================
+    DOM References
+    =====================================
+    */
+
+    const dateRangeSelectorContainer = document.getElementById("date-range-selector");
+
+    /*
+    =====================================
+    Configuration
+    =====================================
+    */
+    const RANGE_OPTIONS = ["1D", "1W", "1M", "3M", "6M", "1Y"];
+
+    createDateRangeSelectorButtons(RANGE_OPTIONS, dateRangeSelectorContainer);
+
+    const buttons =
     document.querySelectorAll("#date-range-selector > button");
 
-buttons.forEach(button => {
-    button.addEventListener(
-        "click",
-        handleRangeButtonClick
-    );
-});
+    buttons.forEach(button => {
+        button.addEventListener(
+            "click",
+            handleRangeButtonClick
+        );
+    });
+};
