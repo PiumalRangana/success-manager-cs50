@@ -1,4 +1,5 @@
 import { applyDateRange } from '../analyticsController.js';
+import { getAnalyticsDateRange } from '../analyticsStore.js';
 /*
 =====================================
 Render Functions
@@ -6,10 +7,11 @@ Render Functions
 */
 
 function createCalendarSelectorButton() {
+    const { startDate, endDate } = getAnalyticsDateRange();
     return`
         <button type="button" class="btn dropdown-button"  data-bs-toggle="modal" data-bs-target="#calendar-selector-form-modal">
             <i class="bi bi-calendar4-range pe-2"></i>
-            <small>Apr 20 - Apr 27, 2026</small>
+            <small>${startDate} - ${endDate}</small>
             <i class="bi bi-caret-down ps-1"></i>
         </button>`}
 ;
@@ -45,7 +47,7 @@ function createCalendarSelectorModal() {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="apply-date-range" disabled>Apply</button>
+                    <button type="submit" class="btn btn-primary" id="apply-date-range" disabled data-bs-dismiss="modal">Apply</button>
                 </div>
             </div>
         </div>

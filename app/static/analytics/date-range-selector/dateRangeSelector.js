@@ -1,4 +1,13 @@
 import { applyDateRange } from '../analyticsController.js';
+import { getAnalyticsDateRange } from '../analyticsStore.js';
+
+/*
+=====================================
+Configuration
+=====================================
+*/
+const RANGE_OPTIONS = ["1D", "1W", "1M", "3M", "6M", "1Y"];
+
 
 /*
 =====================================
@@ -7,11 +16,18 @@ Render Functions
 */
 
 function createDateRangeSelectorButtons(RANGE_OPTIONS, container) {
+
     for (let i = 0; i < RANGE_OPTIONS.length; i++) {
         const button = document.createElement("button");
+        button.id = `date-range-${RANGE_OPTIONS[i]}`;
         button.value = RANGE_OPTIONS[i];
         button.innerHTML = `<small>${RANGE_OPTIONS[i]}</small>`;
         container.appendChild(button);
+    }
+    let matchingPreset = getMatchingPreSet();
+    if (matchingPreset) {
+        const matchingButton = document.getElementById(`date-range-${matchingPreset}`);
+        matchingButton.classList.add("active");
     }
 }
 
@@ -90,11 +106,27 @@ Utility Functions
 */
 
 function formatDate(date) {
-    return date.toISOString().split("T")[0];
+    return new Intl.DateTimeFormat('sv-SE').format(date);
 }
 
+function getMatchingPreSet() {
+    const { startDate, endDate } = getAnalyticsDateRange();
 
+    for (let preset of RANGE_OPTIONS) {
+        const {
+            startDate: calculatedStartDate,
+            endDate: calculatedEndDate
+        } = calculateDateRange(preset);
 
+        if (
+            formatDate(calculatedStartDate) === startDate &&
+            formatDate(calculatedEndDate) === endDate
+        ) {
+            return preset;
+        }
+    }
+    return null;
+}
 
 export function renderDateRangeSelector() {
     /*
@@ -104,13 +136,6 @@ export function renderDateRangeSelector() {
     */
 
     const dateRangeSelectorContainer = document.getElementById("date-range-selector");
-
-    /*
-    =====================================
-    Configuration
-    =====================================
-    */
-    const RANGE_OPTIONS = ["1D", "1W", "1M", "3M", "6M", "1Y"];
 
     createDateRangeSelectorButtons(RANGE_OPTIONS, dateRangeSelectorContainer);
 

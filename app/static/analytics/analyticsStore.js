@@ -15,3 +15,10 @@ export function setAnalyticsSessions(sessions) {
 export function getAnalyticsData() {
     return analyticsData;
 }
+
+export function getAnalyticsDateRange() {
+    return {
+        startDate: analyticsData.startDate,
+        endDate: analyticsData.endDate
+     };
+}
