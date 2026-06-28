@@ -1,5 +1,5 @@
 import { applyDateRange } from '../analyticsController.js';
-import { getAnalyticsDateRange } from '../analyticsStore.js';
+import { subscribeToDateChanges, getAnalyticsDateRange } from '../analyticsStore.js';
 /*
 =====================================
 Render Functions
@@ -8,10 +8,10 @@ Render Functions
 
 function createCalendarSelectorButton() {
     const { startDate, endDate } = getAnalyticsDateRange();
-    return`
+    return `
         <button type="button" class="btn dropdown-button"  data-bs-toggle="modal" data-bs-target="#calendar-selector-form-modal">
             <i class="bi bi-calendar4-range pe-2"></i>
-            <small>${startDate} - ${endDate}</small>
+            <small id="calendar-selector-range">${startDate} - ${endDate}</small>
             <i class="bi bi-caret-down ps-1"></i>
         </button>`}
 ;
@@ -111,7 +111,7 @@ Event Listeners
 */
 
 function attachEventListeners(fp, dateInputContainers) {
-    
+
     const { startInput, endInput, applyButton } = dateInputContainers;
 
     startInput.addEventListener("change", () => handleStartDateChange(fp, startInput, endInput, applyButton));
@@ -121,7 +121,7 @@ function attachEventListeners(fp, dateInputContainers) {
 
         const startDate = fp.formatDate(fp.selectedDates[0], "Y-m-d");
         const endDate = fp.formatDate(fp.selectedDates[1], "Y-m-d");
-        
+
         applyDateRange([startDate, endDate]);
     });
 }
@@ -160,10 +160,17 @@ function applyCalendarDatesToInputs(selectedDates, fp, dateInputContainers) {
     }
 }
 
+function syncCalendarSelectorToDateRange(startDate, endDate, fp) {
+    const dateTextElement = document.getElementById("calendar-selector-range");
+
+    dateTextElement.textContent = `${startDate} - ${endDate}`;
+    fp.setDate([startDate, endDate], true, "Y-m-d");
+}
+
 export function renderCalendarSelector(calendarSelectorContainer, modalContainer) {
     calendarSelectorContainer.innerHTML = createCalendarSelectorButton();
     modalContainer.innerHTML = createCalendarSelectorModal();
-    
+
     const startInput = document.querySelector("#start-date");
     const endInput = document.querySelector("#end-date");
     const applyButton = document.querySelector("#apply-date-range");
@@ -176,4 +183,8 @@ export function renderCalendarSelector(calendarSelectorContainer, modalContainer
 
     const fp = initializeFlatpickr(dateInputContainers);
     attachEventListeners(fp, dateInputContainers);
+
+    subscribeToDateChanges((startDate, endDate) => {
+        syncCalendarSelectorToDateRange(startDate, endDate, fp);
+    })
 }

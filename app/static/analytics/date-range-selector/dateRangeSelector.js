@@ -1,5 +1,5 @@
 import { applyDateRange } from '../analyticsController.js';
-import { getAnalyticsDateRange } from '../analyticsStore.js';
+import { subscribeToDateChanges, getAnalyticsDateRange } from '../analyticsStore.js';
 
 /*
 =====================================
@@ -24,7 +24,8 @@ function createDateRangeSelectorButtons(RANGE_OPTIONS, container) {
         button.innerHTML = `<small>${RANGE_OPTIONS[i]}</small>`;
         container.appendChild(button);
     }
-    let matchingPreset = getMatchingPreSet();
+    const { startDate, endDate } = getAnalyticsDateRange();
+    let matchingPreset = getMatchingPreSet(startDate,endDate);
     if (matchingPreset) {
         const matchingButton = document.getElementById(`date-range-${matchingPreset}`);
         matchingButton.classList.add("active");
@@ -37,7 +38,7 @@ Business Logic
 =====================================
 */
 
-function calculateDateRange(range){
+function calculateDateRange(range) {
     const endDate = new Date();
     const startDate = new Date();
 
@@ -82,14 +83,6 @@ Event Handlers
 function handleRangeButtonClick(event) {
     const selectedButton = event.currentTarget;
 
-    const buttons = document.querySelectorAll("#date-range-selector > button");
-
-    buttons.forEach(button =>
-        button.classList.remove("active")
-    );
-
-    selectedButton.classList.add("active");
-
     const { startDate, endDate } =
         calculateDateRange(selectedButton.value);
 
@@ -109,8 +102,7 @@ function formatDate(date) {
     return new Intl.DateTimeFormat('sv-SE').format(date);
 }
 
-function getMatchingPreSet() {
-    const { startDate, endDate } = getAnalyticsDateRange();
+function getMatchingPreSet(startDate, endDate) {
 
     for (let preset of RANGE_OPTIONS) {
         const {
@@ -140,7 +132,7 @@ export function renderDateRangeSelector() {
     createDateRangeSelectorButtons(RANGE_OPTIONS, dateRangeSelectorContainer);
 
     const buttons =
-    document.querySelectorAll("#date-range-selector > button");
+        document.querySelectorAll("#date-range-selector > button");
 
     buttons.forEach(button => {
         button.addEventListener(
@@ -148,4 +140,19 @@ export function renderDateRangeSelector() {
             handleRangeButtonClick
         );
     });
+
+    subscribeToDateChanges((startDate, endDate) => {
+        const buttons = document.querySelectorAll("#date-range-selector > button");
+
+        buttons.forEach(button =>
+            button.classList.remove("active")
+        );
+
+        const matchingPreset = getMatchingPreSet(startDate, endDate)
+
+        if (matchingPreset) {
+            const matchingButton = document.getElementById(`date-range-${matchingPreset}`);
+            matchingButton.classList.add("active");
+        }
+    })
 };

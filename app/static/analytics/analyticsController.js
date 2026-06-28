@@ -15,13 +15,7 @@ export async function applyDateRange([startDate, endDate]) {
     console.log("Sessions for selected date range:", sessions);
 }
 
-export function initializeAnalytics() {
-
-    const startDate = new Intl.DateTimeFormat('sv-SE').format(new Date());
-    const endDate = new Intl.DateTimeFormat('sv-SE').format(new Date());
-
-    setAnalyticsDateRange(startDate, endDate);
-    applyDateRange([startDate, endDate]);
+function initializeAnalytics() {
 
     renderDateRangeSelector();
 
@@ -29,7 +23,11 @@ export function initializeAnalytics() {
     const container = document.querySelector('#calendar-selector');
     
     renderCalendarSelector(container, modalContainer);
-    
+
+    const startDate = new Intl.DateTimeFormat('sv-SE').format(new Date());
+    const endDate = new Intl.DateTimeFormat('sv-SE').format(new Date());
+
+    applyDateRange([startDate, endDate]);
 }
 
 initializeAnalytics();
