@@ -1,7 +1,8 @@
 let analyticsData = {
     startDate: null,
     endDate: null,
-    sessions: []
+    sessions: [],
+    calculated: null
 };
 
 let dateListeners = [];
@@ -15,6 +16,10 @@ export function setAnalyticsDateRange(startDate, endDate) {
 
 export function setAnalyticsSessions(sessions) {
     analyticsData.sessions = sessions;
+}
+
+export function setCalculatedAnalytics(calculatedAnalytics) {
+    analyticsData.calculated = calculatedAnalytics;
 }
 
 export function getAnalyticsData() {
@@ -39,5 +44,3 @@ export function subscribeToDateChanges(fn) {
 function notifyDateChanges() {
   dateListeners.forEach(fn => fn(analyticsData.startDate,analyticsData.endDate));
 }
-
-// make two subscribe paths to date listners and session listeners

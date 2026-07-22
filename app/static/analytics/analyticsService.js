@@ -9,3 +9,15 @@ export function fetchSessionsForDateRange(startDate, endDate) {
             return [];
         });
 }
+
+export function fetchCalculatedAnalytics([startDate, endDate]) {
+    return fetch(`/api/analytics/calculated?start_date=${startDate}&end_date=${endDate}`)
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => {
+            console.error("Error fetching calculated analytics:", error);
+            return {};
+        });
+}

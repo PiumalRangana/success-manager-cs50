@@ -8,6 +8,21 @@ from sqlalchemy import or_,and_
 main = Blueprint('main', __name__)
 
 
+def format_duration(total_seconds):
+    total_seconds = int(total_seconds)
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    parts = []
+    if hours:
+        parts.append(f"{hours}h")
+    if minutes or hours:
+        parts.append(f"{minutes}m")
+    parts.append(f"{seconds}s")
+
+    return " ".join(parts)
+
+
 @main.route('/')
 def land():
     return render_template('landing.html')
@@ -271,21 +286,113 @@ def get_sessions_for_date_range():
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
 
-    start_date_obj = datetime.strptime(start_date, "%Y-%m-%d")
-    end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
+    if not start_date or not end_date:
+        return jsonify({"error": "start_date and end_date are required"}), 400
+
+    try:
+        start_date_obj = datetime.combine(datetime.strptime(start_date, "%Y-%m-%d").date(), time.min)
+        end_date_obj = datetime.combine(datetime.strptime(end_date, "%Y-%m-%d").date(), time.max)
+    except ValueError:
+        return jsonify({"error": "Dates must use YYYY-MM-DD format"}), 400
+
+    if start_date_obj > end_date_obj:
+        return jsonify({"error": "start_date must be before or equal to end_date"}), 400
 
     sessions = TimeSession.query.filter(
         TimeSession.user_id == current_user.id,
-        TimeSession.start_time >= start_date_obj,
-        TimeSession.start_time <= end_date_obj
+        TimeSession.start_time <= end_date_obj,
+        or_(TimeSession.end_time == None, TimeSession.end_time >= start_date_obj)
     ).all()
 
     return jsonify([
         {
-            "start_time": s.start_time,
-            "end_time": s.end_time if s.end_time else None,
+            "start_time": s.start_time.isoformat(),
+            "end_time": s.end_time.isoformat() if s.end_time else None,
             "color": s.task.color,
             "name": s.task.task_text
         }
         for s in sessions
     ])
+
+@login_required
+@main.route('/api/analytics/calculated', methods=["GET"])
+def get_calculated_analytics():
+    # verify dates
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+
+    if not start_date or not end_date:
+        return jsonify({"error": "start_date and end_date are required"}), 400
+
+    try:
+        start_date_obj = datetime.combine(datetime.strptime(start_date, "%Y-%m-%d").date(), time.min)
+        end_date_obj = datetime.combine(datetime.strptime(end_date, "%Y-%m-%d").date(), time.max)
+    except ValueError:
+        return jsonify({"error": "Dates must use YYYY-MM-DD format"}), 400
+
+    if start_date_obj > end_date_obj:
+        return jsonify({"error": "start_date must be before or equal to end_date"}), 400
+
+    # Query time sessions intersecting the date range for the current user
+    sessions = TimeSession.query.filter(
+        TimeSession.user_id == current_user.id,
+        TimeSession.start_time <= end_date_obj,
+        or_(TimeSession.end_time == None, TimeSession.end_time >= start_date_obj)
+    ).all()
+
+    task_durations = {}
+    total_duration = timedelta(0)
+    total_sessions = 0
+    now = datetime.now()
+
+    for time_session in sessions:
+        session_end_time = time_session.end_time or now
+        session_start = max(time_session.start_time, start_date_obj)
+        session_end = min(session_end_time, end_date_obj)
+
+        if session_end <= session_start:
+            continue
+
+        session_duration = session_end - session_start
+        total_duration += session_duration
+        total_sessions += 1
+
+        if time_session.task_id not in task_durations:
+            task_durations[time_session.task_id] = {
+                "task_id": time_session.task_id,
+                "name": time_session.task.task_text,
+                "color": time_session.task.color,
+                "duration": timedelta(0)
+            }
+
+        task_durations[time_session.task_id]["duration"] += session_duration
+        
+    total_seconds = int(total_duration.total_seconds())
+    number_of_days = (end_date_obj.date() - start_date_obj.date()).days + 1
+    average_daily_seconds = total_seconds // number_of_days if number_of_days else 0
+
+    time_per_task = []
+    for task_data in task_durations.values():
+        task_seconds = int(task_data["duration"].total_seconds())
+        time_per_task.append({
+            "task_id": task_data["task_id"],
+            "name": task_data["name"],
+            "color": task_data["color"],
+            "duration_seconds": task_seconds,
+            "duration_display": format_duration(task_seconds)
+        })
+
+    time_per_task.sort(key=lambda task: task["duration_seconds"], reverse=True)
+
+    return jsonify({
+        "total_focus_time": {
+            "seconds": total_seconds,
+            "display": format_duration(total_seconds)
+        },
+        "average_daily_focus": {
+            "seconds": average_daily_seconds,
+            "display": format_duration(average_daily_seconds)
+        },
+        "total_sessions": total_sessions,
+        "time_per_task": time_per_task
+    })

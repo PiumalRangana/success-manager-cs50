@@ -1,18 +1,25 @@
-import { fetchSessionsForDateRange } from './analyticsService.js';
-import { setAnalyticsSessions, setAnalyticsDateRange, getAnalyticsData } from './analyticsStore.js';
+import { fetchSessionsForDateRange, fetchCalculatedAnalytics } from './analyticsService.js';
+import { setAnalyticsSessions, setAnalyticsDateRange, setCalculatedAnalytics, getAnalyticsData } from './analyticsStore.js';
 import { renderCalendarSelector } from './calendar-selector/calendar-selector.js';
 import { renderDateRangeSelector } from './date-range-selector/dateRangeSelector.js';
 
 export async function applyDateRange([startDate, endDate]) {
     setAnalyticsDateRange(startDate, endDate);
     try {
-        const sessions = await fetchSessionsForDateRange(startDate, endDate);
+        const [sessions, calculatedAnalytics] = await Promise.all([
+            fetchSessionsForDateRange(startDate, endDate),
+            fetchCalculatedAnalytics([startDate, endDate])
+        ]);
+
         setAnalyticsSessions(sessions);
+        setCalculatedAnalytics(calculatedAnalytics);
     } catch (error) {
         console.error("Error applying date range:", error);
     }
-    const sessions = getAnalyticsData().sessions;
-    console.log("Sessions for selected date range:", sessions);
+
+    const analyticsData = getAnalyticsData();
+    console.log("Sessions for selected date range:", analyticsData.sessions);
+    console.log("Calculated analytics:", analyticsData.calculated);
 }
 
 function initializeAnalytics() {
