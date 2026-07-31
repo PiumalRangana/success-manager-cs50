@@ -22,19 +22,35 @@ export async function applyDateRange([startDate, endDate]) {
     console.log("Calculated analytics:", analyticsData.calculated);
 }
 
-function initializeAnalytics() {
+async function initializeAnalytics() {
 
     renderDateRangeSelector();
 
     const modalContainer = document.querySelector('#calendar-selector-form-modal-container');
     const container = document.querySelector('#calendar-selector');
-    
+
     renderCalendarSelector(container, modalContainer);
 
     const startDate = new Intl.DateTimeFormat('sv-SE').format(new Date());
     const endDate = new Intl.DateTimeFormat('sv-SE').format(new Date());
 
-    applyDateRange([startDate, endDate]);
+    await applyDateRange([startDate, endDate]);
+
+    const analyticsData = getAnalyticsData();
+    const totalFocusTimeValue = document.getElementById('total-focus-time-value');
+    const averageDailyFocusValue = document.getElementById('average-daily-focus-value');
+    const taskCompletedValue = document.getElementById('task-completed-value');
+    const totalSessionsValue = document.getElementById('total-sessions-value');
+
+    const calculated = analyticsData.calculated || {};
+
+    totalFocusTimeValue.textContent = calculated.total_focus_time?.display || '0';
+    averageDailyFocusValue.textContent = calculated.average_daily_focus?.display || '0';
+    taskCompletedValue.textContent = calculated.taskCompleted || '0';
+    totalSessionsValue.textContent = calculated.total_sessions || '0';
+
 }
 
-initializeAnalytics();
+initializeAnalytics().catch((error) => {
+    console.error("Error initializing analytics:", error);
+});
