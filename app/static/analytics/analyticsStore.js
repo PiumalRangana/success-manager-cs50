@@ -5,8 +5,10 @@ let analyticsData = {
     calculated: null
 };
 
+let analyticsDataListeners = [];
 let dateListeners = [];
-let sessionListners = [];
+
+// Set functions for analytics data
 
 export function setAnalyticsDateRange(startDate, endDate) {
     analyticsData.startDate = startDate;
@@ -20,7 +22,10 @@ export function setAnalyticsSessions(sessions) {
 
 export function setCalculatedAnalytics(calculatedAnalytics) {
     analyticsData.calculated = calculatedAnalytics;
+    notifyAnalyticsChanges();
 }
+
+// Get functions for analytics data
 
 export function getAnalyticsData() {
     return analyticsData;
@@ -33,6 +38,8 @@ export function getAnalyticsDateRange() {
      };
 }
 
+// subscribe functions for analytics data
+
 export function subscribeToDateChanges(fn) {
   dateListeners.push(fn);
 
@@ -41,6 +48,20 @@ export function subscribeToDateChanges(fn) {
   };
 }
 
+export function subscribeToAnalyticsChanges(fn) {
+  analyticsDataListeners.push(fn);
+
+  return () => {
+    analyticsDataListeners = analyticsDataListeners.filter(l => l !== fn);
+  };
+}
+
+// notify functions for analytics data
+
 function notifyDateChanges() {
   dateListeners.forEach(fn => fn(analyticsData.startDate,analyticsData.endDate));
+}
+
+function notifyAnalyticsChanges() {
+  analyticsDataListeners.forEach(fn => fn(analyticsData.calculated));
 }

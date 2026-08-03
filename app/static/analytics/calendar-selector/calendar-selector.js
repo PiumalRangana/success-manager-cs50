@@ -10,9 +10,9 @@ function createCalendarSelectorButton() {
     const { startDate, endDate } = getAnalyticsDateRange();
     return `
         <button type="button" class="btn dropdown-button"  data-bs-toggle="modal" data-bs-target="#calendar-selector-form-modal">
-            <i class="bi bi-calendar4-range pe-2"></i>
-            <small id="calendar-selector-range">${startDate} - ${endDate}</small>
-            <i class="bi bi-caret-down ps-1"></i>
+            <i class="bi bi-calendar4-range pe-2 btn-icon"></i>
+            <small id="calendar-selector-range" class="calendar-range">${startDate} - ${endDate}</small>
+            <i class="bi bi-caret-down ps-1 btn-icon"></i>
         </button>`}
 ;
 

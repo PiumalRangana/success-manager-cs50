@@ -17,26 +17,32 @@
   container-type: inline-size;
 }
 
+@container (max-width: 215px) {
+  .calendar-range, .btn-icon {
+    font-size: 0.75rem;
+  }
+}
+
+@container (max-width: 184.5px) {
+  .calendar-range, .btn-icon {
+    font-size: 0.66rem;
+  }
+}
+
+@container (max-width: 165.5px) {
+  .calendar-range, .btn-icon {
+    font-size: 0.57rem;
+  }
+}
+
+@container (max-width: 146.5px) {
+  .calendar-range, .btn-icon {
+    font-size: 0.48rem;
+  }
+}
+
 .dropdown-button {
   font-size: 1rem; /* default */
-}
-
-@container (max-width: 160.9px) {
-  .dropdown-button {
-    font-size: 0.6rem;
-  }
-}
-
-@container (min-width: 161px) and (max-width: 191.9px) {
-  .dropdown-button {
-    font-size: 0.8rem;
-  }
-}
-
-@container (min-width: 192px) {
-  .dropdown-button {
-    font-size: 1rem;
-  }
 }
 
 .flatpickr-calendar{
