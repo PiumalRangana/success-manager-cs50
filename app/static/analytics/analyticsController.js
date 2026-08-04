@@ -4,18 +4,43 @@ import { renderCalendarSelector } from './calendar-selector/calendar-selector.js
 import { renderDateRangeSelector } from './date-range-selector/dateRangeSelector.js';
 import { initializeSmallInfoCards } from './small-info-cards/small-info-cards.js';
 
+let activeDateRangeController = null;
+
 export async function applyDateRange([startDate, endDate]) {
+    if (activeDateRangeController) {
+        activeDateRangeController.abort();
+    }
+
+    const controller = new AbortController();
+    activeDateRangeController = controller;
+
     setAnalyticsDateRange(startDate, endDate);
     try {
         const [sessions, calculatedAnalytics] = await Promise.all([
-            fetchSessionsForDateRange(startDate, endDate),
-            fetchCalculatedAnalytics([startDate, endDate])
+            fetchSessionsForDateRange(startDate, endDate, {
+                signal: controller.signal
+            }),
+            fetchCalculatedAnalytics([startDate, endDate], {
+                signal: controller.signal
+            })
         ]);
+
+        if (controller.signal.aborted) {
+            return;
+        }
 
         setAnalyticsSessions(sessions);
         setCalculatedAnalytics(calculatedAnalytics);
     } catch (error) {
+        if (error.name === 'AbortError') {
+            return;
+        }
+
         console.error("Error applying date range:", error);
+    } finally {
+        if (activeDateRangeController === controller) {
+            activeDateRangeController = null;
+        }
     }
 
     const analyticsData = getAnalyticsData();
