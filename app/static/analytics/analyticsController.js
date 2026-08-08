@@ -3,6 +3,7 @@ import { setAnalyticsSessions, setAnalyticsDateRange, setCalculatedAnalytics, ge
 import { renderCalendarSelector } from './calendar-selector/calendar-selector.js';
 import { renderDateRangeSelector } from './date-range-selector/dateRangeSelector.js';
 import { initializeSmallInfoCards } from './small-info-cards/small-info-cards.js';
+import {initializeTotalFocusBarChart} from './total-focuse-bar-chart/controler.js';
 
 let activeDateRangeController = null;
 
@@ -61,7 +62,7 @@ async function initializeAnalytics() {
     const endDate = new Intl.DateTimeFormat('sv-SE').format(new Date());
 
     initializeSmallInfoCards();
-
+    initializeTotalFocusBarChart();
     await applyDateRange([startDate, endDate]);
 }
 

@@ -12,6 +12,8 @@ Analytics
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics/small-info-cards/small-info-cards.css') }}">
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -104,6 +106,9 @@ Analytics
         <div class="col-12 col-md-6">
             <div class="chart-card" id="total-focus-bar-chart">
                 <div class="chart-title">total-focus-bar-chart</div>
+                <div>
+                    <canvas id="total-focus-bar-chart-canvas"></canvas>
+                </div>
                 <div class="chart-body"></div>
             </div>
         </div>
