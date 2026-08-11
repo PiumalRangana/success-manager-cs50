@@ -13,6 +13,7 @@ Analytics
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
 {% endblock %}
 
@@ -105,8 +106,8 @@ Analytics
     <div class="row gx-3 gy-1 p-2 text-center" id="main-analytics">
         <div class="col-12 col-md-6">
             <div class="chart-card" id="total-focus-bar-chart">
-                <div class="chart-title">total-focus-bar-chart</div>
-                <div>
+                <div class="chart-title">Total Focus Time</div>
+                <div class="chart-wrapper total-focus-bar-chart-wrapper">
                     <canvas id="total-focus-bar-chart-canvas"></canvas>
                 </div>
                 <div class="chart-body"></div>
@@ -114,20 +115,20 @@ Analytics
         </div>
         <div class="col-12 col-md-6">
             <div class="chart-card" id="time-per-task">
-                <div class="chart-title">time-per-task</div>
+                <div class="chart-title">Time per Task</div>
                 <div class="chart-body"></div>
             </div>
         </div>
         <div class="col-12 col-md-6">
             <div class="chart-card" id="total-distribution-focus">
-                <div class="chart-title">total-distribution-focus</div>
+                <div class="chart-title">Total Distribution of Focus Time</div>
                 <div class="chart-body"></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6">
             <div class="chart-card" id="insights">
-                <div class="chart-title">insights</div>
+                <div class="chart-title">Insights</div>
                 <div class="chart-body"></div>
             </div>
         </div>
