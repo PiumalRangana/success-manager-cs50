@@ -34,7 +34,7 @@
     flex: 1;
 }
 
-.total-focus-bar-chart-wrapper {
+.chart-wrapper {
     position: relative;
     width: 100% !important;
     max-width: none !important;
