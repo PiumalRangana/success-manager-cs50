@@ -115,10 +115,15 @@ Analytics
         </div>
         <div class="col-12 col-md-6">
             <div class="chart-card" id="time-per-task">
-                <div class="chart-title">Time per Task</div>
+                <div class="chart-title time-per-task-title">
+                    <span>Time Spent per Task</span>
+                </div>
                 <div class="chart-body">
-                    <div class="chart-wrapper time-per-task-wrapper">
-                        <canvas id="time-per-task-canvas"></canvas>
+                    <div class="time-per-task-chart-layout">
+                        <div class="chart-wrapper time-per-task-wrapper">
+                            <canvas id="time-per-task-canvas"></canvas>
+                        </div>
+                        <div class="time-per-task-legend" id="time-per-task-legend"></div>
                     </div>
                 </div>
             </div>
