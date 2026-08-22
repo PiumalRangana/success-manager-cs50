@@ -3,8 +3,9 @@ import { setAnalyticsSessions, setAnalyticsDateRange, setCalculatedAnalytics, ge
 import { renderCalendarSelector } from './calendar-selector/calendar-selector.js';
 import { renderDateRangeSelector } from './date-range-selector/dateRangeSelector.js';
 import { initializeSmallInfoCards } from './small-info-cards/small-info-cards.js';
-import {initializeTotalFocusBarChart} from './total-focuse-bar-chart/controler.js';
+import { initializeTotalFocusBarChart } from './total-focuse-bar-chart/controler.js';
 import { initializeTimePerTaskDonutChart } from './time-per-task/controler.js';
+import { initializeTimeDistributionByHourChart } from './time-distribution-by-hour/controler.js'
 
 let activeDateRangeController = null;
 
@@ -65,6 +66,8 @@ async function initializeAnalytics() {
     initializeSmallInfoCards();
     initializeTotalFocusBarChart();
     initializeTimePerTaskDonutChart();
+    initializeTimeDistributionByHourChart();
+
     await applyDateRange([startDate, endDate]);
 }
 
