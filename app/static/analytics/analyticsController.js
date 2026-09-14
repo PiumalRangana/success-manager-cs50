@@ -6,6 +6,7 @@ import { initializeSmallInfoCards } from './small-info-cards/small-info-cards.js
 import { initializeTotalFocusBarChart } from './total-focuse-bar-chart/controler.js';
 import { initializeTimePerTaskDonutChart } from './time-per-task/controler.js';
 import { initializeTimeDistributionByHourChart } from './time-distribution-by-hour/controler.js'
+import { initializeInsights } from "./insights/insightsControler.js"
 
 let activeDateRangeController = null;
 
@@ -47,8 +48,6 @@ export async function applyDateRange([startDate, endDate]) {
     }
 
     const analyticsData = getAnalyticsData();
-    console.log("Sessions for selected date range:", analyticsData.sessions);
-    console.log("Calculated analytics:", analyticsData.calculated);
 }
 
 async function initializeAnalytics() {
@@ -68,6 +67,9 @@ async function initializeAnalytics() {
     initializeTimePerTaskDonutChart();
     initializeTimeDistributionByHourChart();
 
+    // The listener waits for the first successful selected-session load before
+    // building insights, so it never pairs a new date range with old sessions.
+    await initializeInsights({ renderCurrent: false });
     await applyDateRange([startDate, endDate]);
 }
 
