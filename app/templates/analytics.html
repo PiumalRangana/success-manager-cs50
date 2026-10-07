@@ -40,65 +40,52 @@ Analytics
     </div>
     <div id="calendar-selector-form-modal-container"></div>
 
-    <!-- 4 small cards of basic analytics -->
-    <div class="row gx-3 gy-1 p-2 text-center" id="basic-analytics-row">
-        <div class="col-6 col-md-3 ">
-            <div class="small-card d-flex flex-row" id="total-focus-time">
-                <div class="icon-box p-2" style="background-color: #13254B;">
-                    <i class="bi bi-clock" style="color: #4A79ED;"></i>
-                </div>
-                <div class="d-flex flex-column card-detail-box">
-                    <div class="info-card-title">Total focus time</div>
-                    <p id="total-focus-time-value" class="analytics-card-value"></p>
-                </div>
-            </div>
+    <!-- Summary cards read from the shared dashboard model. -->
+    <div class="row gx-3 gy-3 p-2" id="basic-analytics-row">
+        <div class="col-12 col-sm-6 col-lg">
+            <article class="metric-card" aria-labelledby="total-focus-time-title">
+                <div class="metric-card-icon metric-card-icon--focus"><i class="bi bi-stopwatch"></i></div>
+                <h2 class="metric-card-title" id="total-focus-time-title">Total Focus Time</h2>
+                <p class="metric-card-value" id="total-focus-time-value">--</p>
+                <p class="metric-card-change" id="total-focus-time-change" aria-live="polite"></p>
+                <p class="metric-card-caption">vs. previous period</p>
+            </article>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="small-card d-flex flex-row" id="average-daily-focus">
-                <div class="icon-box p-2" style="color: #A76BED; background-color: #21203E;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="bi">
-                        <!-- Outer Crosshair Ticks -->
-                        <line x1="12" y1="2" x2="12" y2="5" />
-                        <line x1="12" y1="19" x2="12" y2="22" />
-                        <line x1="2" y1="12" x2="5" y2="12" />
-                        <line x1="19" y1="12" x2="22" y2="12" />
-
-                        <!-- Outer Ring -->
-                        <circle cx="12" cy="12" r="7" />
-
-                        <!-- Center Bullseye Dot -->
-                        <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none" />
-                    </svg>
-                </div>
-                <div class="d-flex flex-column card-detail-box">
-                    <div class="info-card-title">Avg daily focus</div>
-                    <p id="average-daily-focus-value" class="analytics-card-value"></p>
-                </div>
-            </div>
+        <div class="col-12 col-sm-6 col-lg">
+            <article class="metric-card" aria-labelledby="average-daily-focus-title">
+                <div class="metric-card-icon metric-card-icon--daily"><i class="bi bi-sun"></i></div>
+                <h2 class="metric-card-title" id="average-daily-focus-title">Average Daily Focus</h2>
+                <p class="metric-card-value" id="average-daily-focus-value">--</p>
+                <p class="metric-card-change" id="average-daily-focus-change" aria-live="polite"></p>
+                <p class="metric-card-caption">vs. previous period</p>
+            </article>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="small-card d-flex flex-row" id="task-completed">
-                <div class="icon-box p-2" style="background-color: #14302B;">
-                    <i class="bi bi-check-circle" style="color: #53CE79;"></i>
-                </div>
-                <div class="d-flex flex-column card-detail-box">
-                    <div class="info-card-title">Task completed</div>
-                    <p id="task-completed-value" class="analytics-card-value"></p>
-                </div>
-            </div>
+        <div class="col-12 col-sm-6 col-lg">
+            <article class="metric-card" aria-labelledby="total-sessions-title">
+                <div class="metric-card-icon metric-card-icon--sessions"><i class="bi bi-calendar3"></i></div>
+                <h2 class="metric-card-title" id="total-sessions-title">Total Sessions</h2>
+                <p class="metric-card-value" id="total-sessions-value">--</p>
+                <p class="metric-card-change" id="total-sessions-change" aria-live="polite"></p>
+                <p class="metric-card-caption">vs. previous period</p>
+            </article>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="small-card d-flex flex-row" id="total-sessions">
-                <div class="icon-box p-2" style="background-color: #322C1E;">
-                    <i class="bi bi-lightning-charge" style="color: #F8B21C;"></i>
-                </div>
-                <div class="d-flex flex-column card-detail-box">
-                    <div class="info-card-title">Total sessions</div>
-                    <p id="total-sessions-value" class="analytics-card-value"></p>
-                </div>
-            </div>
+        <div class="col-12 col-sm-6 col-lg">
+            <article class="metric-card" aria-labelledby="active-days-title">
+                <div class="metric-card-icon metric-card-icon--active"><i class="bi bi-calendar-check"></i></div>
+                <h2 class="metric-card-title" id="active-days-title">Active Days</h2>
+                <p class="metric-card-value" id="active-days-value">--</p>
+                <p class="metric-card-change" id="active-days-change" aria-live="polite"></p>
+                <p class="metric-card-caption">vs. previous period</p>
+            </article>
+        </div>
+        <div class="col-12 col-sm-6 col-lg">
+            <article class="metric-card" aria-labelledby="average-session-length-title">
+                <div class="metric-card-icon metric-card-icon--length"><i class="bi bi-hourglass-split"></i></div>
+                <h2 class="metric-card-title" id="average-session-length-title">Average Session Length</h2>
+                <p class="metric-card-value" id="average-session-length-value">--</p>
+                <p class="metric-card-change" id="average-session-length-change" aria-live="polite"></p>
+                <p class="metric-card-caption">vs. previous period</p>
+            </article>
         </div>
     </div>
 

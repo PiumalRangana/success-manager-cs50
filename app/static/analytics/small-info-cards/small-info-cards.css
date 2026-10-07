@@ -1,79 +1,98 @@
-.icon-box {
-    width: 40px;
-    height: 40px;
-    border-radius: 40%;
-    flex-shrink: 0;
-    min-width: 40px;
+.metric-card {
+    min-height: 180px;
+    height: 100%;
+    padding: 1rem;
+    color: #f7f9ff;
+    background: #0d1724;
+    border: 1px solid #1d3859;
+    border-radius: 10px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
-.card-detail-box {
-    padding-left: 5%;
+.metric-card-icon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 0.85rem;
+    font-size: 1.25rem;
+    place-items: center;
+    border-radius: 50%;
 }
 
-.info-card-title {
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    color: #CDD2D7;
+.metric-card-icon--focus {
+    color: #4a79ed;
+    background: #13254b;
 }
 
-.analytics-card-value {
-    font-size: 1.5rem;
-    font-weight: 525;
-    color: white;
+.metric-card-icon--daily {
+    color: #a76bed;
+    background: #292044;
 }
 
-.small-card {
-    container-type: inline-size;
+.metric-card-icon--sessions {
+    color: #6f9bff;
+    background: #193661;
 }
 
-@container (max-width: 217px) {
-    .analytics-card-value {
-        font-size: 1.2rem;
-    }
+.metric-card-icon--active {
+    color: #53ceae;
+    background: #143b35;
 }
 
-@container (max-width: 182px) {
-    .analytics-card-value {
-        font-size: 1rem;
-    }
-
-    .info-card-title {
-        font-size: 0.78rem;
-    }
+.metric-card-icon--length {
+    color: #f8b21c;
+    background: #3b3020;
 }
 
-@container (max-width: 159px) {
-    .analytics-card-value {
-        font-size: 0.8rem;
-    }
-
-    .info-card-title {
-        font-size: 0.72rem;
-    }
+.metric-card-title {
+    margin: 0;
+    color: #cdd2d7;
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.35;
 }
 
-@container (max-width: 135px) {
-    .info-card-title {
-        font-size: 0.59rem;
-    }
-
-    .analytics-card-value {
-        font-size: 0.7rem;
-    }
+.metric-card-value {
+    min-height: 2.35rem;
+    margin: 0.55rem 0 0.35rem;
+    color: #fff;
+    font-size: clamp(1.35rem, 2vw, 1.8rem);
+    font-variant-numeric: tabular-nums;
+    font-weight: 650;
+    line-height: 1.2;
 }
 
-@container (max-width: 123px) {
-    .info-card-title {
-        font-size: 0.494rem;
-    }
-
-    .analytics-card-value {
-        font-size: 0.6rem;
-    }
+.metric-card-change,
+.metric-card-caption {
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.35;
 }
-@container (max-width: 118px){
-    .analytics-card-value {
-        font-size: 0.49rem;
+
+.metric-card-change {
+    min-height: 1.1rem;
+    font-weight: 650;
+}
+
+.metric-card-change--positive {
+    color: #42dda9;
+}
+
+.metric-card-change--negative {
+    color: #ff7d91;
+}
+
+.metric-card-change--neutral {
+    color: #9aa8bd;
+}
+
+.metric-card-caption {
+    margin-top: 0.1rem;
+    color: #9aa8bd;
+}
+
+@media (max-width: 575.98px) {
+    .metric-card {
+        min-height: 164px;
     }
 }

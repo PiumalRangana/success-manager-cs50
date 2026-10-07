@@ -1,83 +1,46 @@
-import { generateInsights } from "./insightsGenarator.js"
-import { renderInsights } from "./insightRenderer.js"
-import { makeInsightSessionsObject } from "./insightPipeline.js"
+import { generateInsightsFromDashboard } from './insightsGenarator.js';
+import { renderInsights } from './insightRenderer.js';
 import {
-    subscribeToAnalyticsSessionsChanges,
-    subscribeToDateChanges
-} from "../analyticsStore.js"
+    getAnalyticsDashboard,
+    subscribeToAnalyticsDashboardChanges
+} from '../analyticsStore.js';
 
-let activeInsightController = null
-let insightRequestVersion = 0
-let cleanupInsights = null
+let cleanupInsights = null;
 
-function cancelActiveInsightRequest() {
-    insightRequestVersion += 1
-
-    if (activeInsightController) {
-        activeInsightController.abort()
-        activeInsightController = null
+function refreshInsights(dashboard = getAnalyticsDashboard()) {
+    if (!dashboard) {
+        return;
     }
-}
 
-async function refreshInsights() {
-    cancelActiveInsightRequest()
+    const insights = generateInsightsFromDashboard(dashboard);
 
-    const controller = new AbortController()
-    const requestVersion = insightRequestVersion
-    activeInsightController = controller
-
-    try {
-        const periodsAndSessionsObject = await makeInsightSessionsObject({
-            signal: controller.signal
-        })
-
-        if (controller.signal.aborted || requestVersion !== insightRequestVersion) {
-            return
-        }
-
-        const insights = generateInsights(periodsAndSessionsObject)
-        renderInsights(insights)
-    } catch (error) {
-        if (error.name !== "AbortError") {
-            console.error("Error refreshing insights:", error)
-        }
-    } finally {
-        if (activeInsightController === controller) {
-            activeInsightController = null
-        }
+    if (insights) {
+        renderInsights(insights);
     }
 }
 
 export async function initializeInsights({ renderCurrent = true } = {}) {
     if (cleanupInsights) {
-        cleanupInsights()
+        cleanupInsights();
     }
 
-    const unsubscribeFromSessions = subscribeToAnalyticsSessionsChanges(() => {
-        void refreshInsights()
-    })
-
-    // A date change happens before its selected sessions are loaded. Cancel the
-    // old comparison request now, then let the sessions listener start the new one.
-    const unsubscribeFromDates = subscribeToDateChanges(() => {
-        cancelActiveInsightRequest()
-    })
+    const unsubscribeFromDashboard = subscribeToAnalyticsDashboardChanges(
+        refreshInsights
+    );
 
     const cleanup = () => {
-        unsubscribeFromSessions()
-        unsubscribeFromDates()
-        cancelActiveInsightRequest()
+        unsubscribeFromDashboard();
 
         if (cleanupInsights === cleanup) {
-            cleanupInsights = null
+            cleanupInsights = null;
         }
-    }
+    };
 
-    cleanupInsights = cleanup
+    cleanupInsights = cleanup;
 
     if (renderCurrent) {
-        await refreshInsights()
+        refreshInsights();
     }
 
-    return cleanup
+    return cleanup;
 }

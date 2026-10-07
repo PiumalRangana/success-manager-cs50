@@ -306,6 +306,8 @@ def get_sessions_for_date_range():
 
     return jsonify([
         {
+            "id": s.id,
+            "task_id": s.task_id,
             "start_time": s.start_time.isoformat(),
             "end_time": s.end_time.isoformat() if s.end_time else None,
             "color": s.task.color,
