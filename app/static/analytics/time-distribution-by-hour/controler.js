@@ -1,19 +1,21 @@
-import { renderTimeDistributionChart } from "./renderer.js";
-import { getAnalyticsSessions } from "../analyticsStore.js";
-import { groupByHour } from "./pipeline.js";
-import { subscribeToAnalyticsSessionsChanges } from "../analyticsStore.js";
-
+import {
+    getAnalyticsDashboard,
+    subscribeToAnalyticsDashboardChanges
+} from '../analyticsStore.js';
+import { renderTimeDistributionChart } from './renderer.js';
+import { groupByHour } from './pipeline.js';
 
 export function initializeTimeDistributionByHourChart() {
+    let chart = null;
 
-    const rowSessions = getAnalyticsSessions()
-    const groupedByHourData = groupByHour(rowSessions)
-    let chart = renderTimeDistributionChart(groupedByHourData)
+    function updateChart(dashboard = getAnalyticsDashboard()) {
+        const hourlyDistribution = dashboard?.periods.selected.stats.hourlyDistribution || [];
+        const chartData = groupByHour(hourlyDistribution);
 
-    subscribeToAnalyticsSessionsChanges((newSessions) => {
-            chart.destroy();
-            const updatedGroupedByHourDataData = groupByHour(newSessions);
-            chart = renderTimeDistributionChart(updatedGroupedByHourDataData);
-        }
-    );
+        chart?.destroy();
+        chart = renderTimeDistributionChart(chartData);
+    }
+
+    updateChart();
+    return subscribeToAnalyticsDashboardChanges(updateChart);
 }

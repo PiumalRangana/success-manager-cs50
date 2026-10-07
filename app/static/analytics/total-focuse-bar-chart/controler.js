@@ -1,23 +1,26 @@
-import { getAnalyticsSessions } from '../analyticsStore.js';
+import {
+    getAnalyticsDashboard,
+    subscribeToAnalyticsDashboardChanges
+} from '../analyticsStore.js';
 import { getBarChartData } from './data-pipe-line.js';
 import { renderBarChart } from './renderer.js';
-import { subscribeToAnalyticsSessionsChanges } from '../analyticsStore.js';
 
-// initialize the bar chart with data from data-pipe-line.js
 export function initializeTotalFocusBarChart() {
+    let chart = null;
+
+    function updateChart(dashboard = getAnalyticsDashboard()) {
+        const dailyActivity = dashboard?.periods.selected.stats.dailyActivity || [];
+        const barChartData = getBarChartData(dailyActivity);
+
+        chart?.destroy();
+        chart = renderBarChart(barChartData);
+    }
+
     try {
-        const analyticsSessions = getAnalyticsSessions();
-        const barChartData = getBarChartData(analyticsSessions);
-        let chart = renderBarChart(barChartData);
-
-        subscribeToAnalyticsSessionsChanges((sessions) => {
-            chart.destroy(); // Destroy the previous chart instance before creating a new one
-            const barChartData = getBarChartData(sessions);
-            chart = renderBarChart(barChartData);
-        });
-
+        updateChart();
+        return subscribeToAnalyticsDashboardChanges(updateChart);
     } catch (error) {
-        console.error("Error initializing total focus bar chart:", error);
-        return;
+        console.error('Error initializing total focus bar chart:', error);
+        return null;
     }
 }

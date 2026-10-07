@@ -7,8 +7,8 @@ export function renderTimePerTaskDonutChart(convertedData) {
     const dataValues = [];
     const backgroundColors = [];
 
-    Object.entries(convertedData).forEach(([key, item]) => {
-        labels.push(key);
+    convertedData.forEach((item) => {
+        labels.push(item.name);
         dataValues.push(item.duration);
         backgroundColors.push(item.color || '#8fa0b8');
     });

@@ -1,18 +1,21 @@
+import {
+    getAnalyticsDashboard,
+    subscribeToAnalyticsDashboardChanges
+} from '../analyticsStore.js';
 import { convertTimePerTaskData } from './pipeline.js';
 import { renderTimePerTaskDonutChart } from './renderer.js';
-import { subscribeToAnalyticsSessionsChanges } from '../analyticsStore.js';
-import { getAnalyticsSessions } from '../analyticsStore.js';
 
 export function initializeTimePerTaskDonutChart() {
+    let chart = null;
 
-    const rowSessions = getAnalyticsSessions();
-    const convertedData = convertTimePerTaskData(rowSessions);
+    function updateChart(dashboard = getAnalyticsDashboard()) {
+        const taskBreakdown = dashboard?.periods.selected.stats.taskBreakdown || [];
+        const chartData = convertTimePerTaskData(taskBreakdown);
 
-    let chart = renderTimePerTaskDonutChart(convertedData);
+        chart?.destroy();
+        chart = renderTimePerTaskDonutChart(chartData);
+    }
 
-    subscribeToAnalyticsSessionsChanges((newSessions) => {
-        chart.destroy();
-        const updatedConvertedData = convertTimePerTaskData(newSessions);
-        chart = renderTimePerTaskDonutChart(updatedConvertedData);
-    });
+    updateChart();
+    return subscribeToAnalyticsDashboardChanges(updateChart);
 }
