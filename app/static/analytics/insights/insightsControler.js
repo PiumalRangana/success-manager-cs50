@@ -1,4 +1,4 @@
-import { genarateInsights } from "./insightsGenarator.js"
+import { generateInsights } from "./insightsGenarator.js"
 import { renderInsights } from "./insightRenderer.js"
 import { makeInsightSessionsObject } from "./insightPipeline.js"
 import {
@@ -35,7 +35,7 @@ async function refreshInsights() {
             return
         }
 
-        const insights = genarateInsights(periodsAndSessionsObject)
+        const insights = generateInsights(periodsAndSessionsObject)
         renderInsights(insights)
     } catch (error) {
         if (error.name !== "AbortError") {

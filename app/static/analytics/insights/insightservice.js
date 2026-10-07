@@ -10,7 +10,6 @@ export function getSessionsForDateRange(startDate, endDate, options = {}) {
 
 export function getSelectedPeriodsAndSessions() {
     const { startDate, endDate } = getAnalyticsDateRange()
-    console.log("Selected date range:", startDate, endDate);
 
     if (!startDate || !endDate) {
         console.log("No date range selected.");

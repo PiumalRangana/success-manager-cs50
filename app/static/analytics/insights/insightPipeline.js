@@ -69,7 +69,6 @@ export async function makeInsightSessionsObject({ signal } = {}) {
     if (selectedEndDateDate != today && selectedEndDateDate < today) {
         // if selected end date to today doesn't have equal or more amount of dayas like selected dates
         if ((today - selectedEndDateDate) / (1000 * 60 * 60 * 24) >= numSelectedDates) {
-            console.log("present period has equal or more days than selected period. Getting sessions for present period.")
 
             // get sessions for the present period
             const presentStartDate = new Date(today - (numSelectedDates - 1) * MS_PER_DAY);
@@ -87,12 +86,10 @@ export async function makeInsightSessionsObject({ signal } = {}) {
 
         } else {
             // else get range from selected end date to today and get sessions for that date
-            console.log("present period has less days than selected period. Getting sessions for present period.")
             const presentStartDate = new Date(selectedEndDate)
             presentStartDate.setDate(presentStartDate.getDate() + 1);
             const presentEndDate = new Date(today);
 
-            console.log("present start date: ", presentStartDate, "present end date: ", presentEndDate)
 
             // get sessions for that date
             presentSessionsPromise = getSessionsForDateRange(
@@ -106,8 +103,6 @@ export async function makeInsightSessionsObject({ signal } = {}) {
             periodsAndSessions.present.isEqualLength = false;
 
         }
-    } else {
-        console.log("end dates matched or selected end date is in the future. No present period to compare.")
     }
 
     const [previousSessions, presentSessions] = await Promise.all([
