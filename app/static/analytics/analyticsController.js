@@ -16,6 +16,7 @@ import { initializeTotalFocusBarChart } from './total-focuse-bar-chart/controler
 import { initializeTimePerTaskDonutChart } from './time-per-task/controler.js';
 import { initializeTimeDistributionByHourChart } from './time-distribution-by-hour/controler.js';
 import { initializeActivityConsistency } from './activity-consistency/controller.js';
+import { initializeSessionLengthDistribution } from './session-length-distribution/controler.js';
 import { initializeInsights } from './insights/insightsControler.js';
 
 let activeDateRangeController = null;
@@ -118,6 +119,7 @@ async function initializeAnalytics() {
     initializeTimePerTaskDonutChart();
     initializeTimeDistributionByHourChart();
     initializeActivityConsistency();
+    initializeSessionLengthDistribution();
 
     await initializeInsights({ renderCurrent: false });
     await applyDateRange([startDate, endDate]);
