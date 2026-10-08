@@ -10,6 +10,7 @@ Analytics
 <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics/date-range-selector/dateRangeSelector.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics/small-info-cards/small-info-cards.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='analytics/activity-consistency/activity-consistency.css') }}">
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -127,10 +128,10 @@ Analytics
             </div>
         </div>
 
-        <div class="col-12 col-md-6">
-            <div class="chart-card" id="insights">
-                <div class="chart-title">Insights</div>
-                <div class="chart-body"></div>
+        <div class="col-12 col-md-6" id="activity-consistency-column">
+            <div class="chart-card" id="activity-consistency">
+                <div class="chart-title">Activity &amp; Consistency</div>
+                <div class="chart-body" id="activity-consistency-body"></div>
             </div>
         </div>
     </div>
