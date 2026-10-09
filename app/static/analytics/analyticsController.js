@@ -17,6 +17,7 @@ import { initializeTimePerTaskDonutChart } from './time-per-task/controler.js';
 import { initializeTimeDistributionByHourChart } from './time-distribution-by-hour/controler.js';
 import { initializeActivityConsistency } from './activity-consistency/controller.js';
 import { initializeSessionLengthDistribution } from './session-length-distribution/controler.js';
+import { initializePeriodComparison } from './period-comparison/controler.js';
 import { initializeInsights } from './insights/insightsControler.js';
 
 let activeDateRangeController = null;
@@ -85,8 +86,6 @@ export async function applyDateRange([startDate, endDate]) {
                 }
                 : null
         });
-        // Existing chart/card modules continue to receive their current inputs
-        // until they are migrated to the shared dashboard model.
         setAnalyticsSessions(selectedSessions);
         setCalculatedAnalytics(calculatedAnalytics);
         setAnalyticsDashboard(dashboard);
@@ -120,6 +119,7 @@ async function initializeAnalytics() {
     initializeTimeDistributionByHourChart();
     initializeActivityConsistency();
     initializeSessionLengthDistribution();
+    initializePeriodComparison();
 
     await initializeInsights({ renderCurrent: false });
     await applyDateRange([startDate, endDate]);

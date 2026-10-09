@@ -11,6 +11,7 @@ Analytics
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics/date-range-selector/dateRangeSelector.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics/small-info-cards/small-info-cards.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics/activity-consistency/activity-consistency.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='analytics/period-comparison/period-comparison.css') }}">
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -142,6 +143,12 @@ Analytics
                         <canvas id="session-length-distribution-canvas"></canvas>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="chart-card" id="period-comparison">
+                <div class="chart-title">Period Comparison</div>
+                <div class="chart-body" id="period-comparison-body"></div>
             </div>
         </div>
     </div>
