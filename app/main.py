@@ -398,3 +398,11 @@ def get_calculated_analytics():
         "total_sessions": total_sessions,
         "time_per_task": time_per_task
     })
+
+@main.route('/api/ai-insight', methods=["POST"])
+@login_required
+def get_ai_insight():
+    data = request.get_json()
+    print("Received AI insight request:", data)
+    # Process the AI insight request
+    return jsonify({"message": "AI insight generated"})

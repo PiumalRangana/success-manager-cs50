@@ -18,8 +18,7 @@ import { initializeTimeDistributionByHourChart } from './time-distribution-by-ho
 import { initializeActivityConsistency } from './activity-consistency/controller.js';
 import { initializeSessionLengthDistribution } from './session-length-distribution/controler.js';
 import { initializePeriodComparison } from './period-comparison/controler.js';
-import { initializeInsights } from './insights/insightsControler.js';
-
+import { initializeAiInsightFeature } from './ai-insight/insightController.js';
 let activeDateRangeController = null;
 
 export async function applyDateRange([startDate, endDate]) {
@@ -120,8 +119,8 @@ async function initializeAnalytics() {
     initializeActivityConsistency();
     initializeSessionLengthDistribution();
     initializePeriodComparison();
+    initializeAiInsightFeature();
 
-    await initializeInsights({ renderCurrent: false });
     await applyDateRange([startDate, endDate]);
 }
 
