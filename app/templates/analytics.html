@@ -12,6 +12,7 @@ Analytics
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics/small-info-cards/small-info-cards.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics/activity-consistency/activity-consistency.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='analytics/period-comparison/period-comparison.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='analytics/ai-insight/ai-insight.css') }}">
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -150,6 +151,11 @@ Analytics
                 <div class="chart-title">Period Comparison</div>
                 <div class="chart-body" id="period-comparison-body"></div>
             </div>
+        </div>
+        <!-- The AI Insights feature is a full-width Analytics panel. Its inner
+             empty, loading, error, and result states are rendered by JavaScript. -->
+        <div class="col-12">
+            <section class="ai-insight-panel" id="ai-insight" aria-labelledby="ai-insight-title"></section>
         </div>
     </div>
 </div>

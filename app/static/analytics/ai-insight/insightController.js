@@ -1,12 +1,22 @@
 // Waits for the button click and coordinates the feature.
-import { renderInsightButtonAndPlaceHolder, renderInsightResponse } from './insightRenderer.js';
-import { getAnalyticsDashboard } from '../analyticsStore.js';
+import {
+    renderInsightButtonAndPlaceHolder,
+    renderInsightEmptyState,
+    renderInsightResponse
+} from './insightRenderer.js';
+import {
+    getAnalyticsDashboard,
+    subscribeToAnalyticsDashboardChanges
+} from '../analyticsStore.js';
 import { createInsightPayload } from './insightPayload.js';
 import { getAiInsight } from './insightService.js';
 
 export function initializeAiInsightFeature() {
     // 1 render button and the place holder from renderer
     renderInsightButtonAndPlaceHolder();
+
+    // A new date range clears old cards, but never makes an AI request.
+    subscribeToAnalyticsDashboardChanges(renderInsightEmptyState);
 
     // 2 listen to the button click
     const insightButton = document.getElementById('ai-insight-button');
