@@ -31,6 +31,7 @@ export function renderInsightButtonAndPlaceHolder() {
 // Render the server's temporary dummy response. Later this will render insight cards.
 export function renderInsightResponse(insightData) {
     const response = document.getElementById('ai-insight-response');
+    console.log("Rendering AI insight response:", insightData);
 
     if (!response) {
         return;
