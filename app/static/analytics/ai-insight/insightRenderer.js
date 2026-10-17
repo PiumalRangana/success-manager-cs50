@@ -79,7 +79,12 @@ export function renderInsightButtonAndPlaceHolder() {
     cards.id = 'ai-insight-cards';
     cards.className = 'row g-3 ai-insight-cards';
 
-    insightSection.append(header, status, emptyState, cards);
+    const feedback = document.createElement('p');
+    feedback.id = 'ai-insight-feedback';
+    feedback.className = 'ai-insight-feedback';
+    feedback.hidden = true;
+
+    insightSection.append(header, status, emptyState, feedback, cards);
 }
 
 function createInsightCard(insight) {
@@ -115,30 +120,95 @@ function createInsightCard(insight) {
 export function renderInsightEmptyState() {
     const status = document.getElementById('ai-insight-status');
     const emptyState = document.getElementById('ai-insight-empty');
+    const feedback = document.getElementById('ai-insight-feedback');
     const cards = document.getElementById('ai-insight-cards');
+    const button = document.getElementById('ai-insight-button');
 
-    if (!status || !emptyState || !cards) {
+    if (!status || !emptyState || !feedback || !cards || !button) {
         return;
     }
 
     status.textContent = 'Insights cleared for the new selected period.';
     emptyState.hidden = false;
+    feedback.hidden = true;
+    feedback.className = 'ai-insight-feedback';
     cards.replaceChildren();
+    button.disabled = false;
+    button.textContent = 'Generate insights';
+}
+
+// Show an in-panel progress message while the server is working.
+export function renderInsightLoading() {
+    const status = document.getElementById('ai-insight-status');
+    const emptyState = document.getElementById('ai-insight-empty');
+    const feedback = document.getElementById('ai-insight-feedback');
+    const cards = document.getElementById('ai-insight-cards');
+    const button = document.getElementById('ai-insight-button');
+
+    if (!status || !emptyState || !feedback || !cards || !button) {
+        return;
+    }
+
+    status.textContent = 'Generating AI insights.';
+    emptyState.hidden = true;
+    feedback.hidden = false;
+    feedback.className = 'ai-insight-feedback ai-insight-feedback--loading';
+    feedback.textContent = 'Looking for useful patterns in your selected period…';
+    cards.replaceChildren();
+    button.disabled = true;
+    button.textContent = 'Generating…';
+}
+
+// Show request limits and provider failures in the panel instead of only the console.
+export function renderInsightError(message) {
+    const status = document.getElementById('ai-insight-status');
+    const emptyState = document.getElementById('ai-insight-empty');
+    const feedback = document.getElementById('ai-insight-feedback');
+    const cards = document.getElementById('ai-insight-cards');
+    const button = document.getElementById('ai-insight-button');
+
+    if (!status || !emptyState || !feedback || !cards || !button) {
+        return;
+    }
+
+    status.textContent = message;
+    emptyState.hidden = true;
+    feedback.hidden = false;
+    feedback.className = 'ai-insight-feedback ai-insight-feedback--error';
+    feedback.textContent = message;
+    cards.replaceChildren();
+    button.disabled = false;
+    button.textContent = 'Try again';
 }
 
 // Render structured insight cards returned by the server.
 export function renderInsightResponse(insightData) {
     const status = document.getElementById('ai-insight-status');
     const emptyState = document.getElementById('ai-insight-empty');
+    const feedback = document.getElementById('ai-insight-feedback');
     const cards = document.getElementById('ai-insight-cards');
+    const button = document.getElementById('ai-insight-button');
     console.log("Rendering AI insight response:", insightData);
 
-    if (!status || !emptyState || !cards || !Array.isArray(insightData.insights)) {
+    if (!status || !emptyState || !feedback || !cards || !button || !Array.isArray(insightData.insights)) {
         return;
     }
 
     status.textContent = 'Insights are ready.';
     emptyState.hidden = true;
+    feedback.hidden = false;
+    feedback.className = 'ai-insight-feedback';
+
+    if (insightData.meta?.cached) {
+        feedback.textContent = 'Showing saved insights for this data. No new generation was used.';
+    } else {
+        const remaining = insightData.meta?.remainingGenerations;
+        feedback.textContent = Number.isInteger(remaining)
+            ? `${remaining} AI generation${remaining === 1 ? '' : 's'} remaining today.`
+            : 'Insights generated.';
+    }
 
     cards.replaceChildren(...insightData.insights.map(createInsightCard));
+    button.disabled = false;
+    button.textContent = 'Generate again';
 }

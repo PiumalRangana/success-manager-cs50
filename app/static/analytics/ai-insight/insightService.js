@@ -11,7 +11,9 @@ export async function getAiInsight(payload) {
     });
 
     if (!response.ok) {
-        throw new Error(`AI insight request failed with status ${response.status}.`);
+        const errorBody = await response.json().catch(() => null);
+        const message = errorBody?.error || 'Unable to generate AI insights.';
+        throw new Error(message);
     }
 
     return response.json();

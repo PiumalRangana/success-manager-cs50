@@ -2,6 +2,12 @@ from flask import Blueprint, render_template, redirect, url_for, request, sessio
 from flask_login import login_required, current_user
 from app.helpers import task_text_color
 from  .models import Task, TimeSession
+from .ai_insight_provider import (
+    AIInsightLimitError,
+    AIInsightProviderError,
+    AIInsightRequestError,
+    generate_ai_insights
+)
 from . import db
 from datetime import datetime, timedelta, time
 from sqlalchemy import or_,and_
@@ -402,40 +408,16 @@ def get_calculated_analytics():
 @main.route('/api/ai-insight', methods=["POST"])
 @login_required
 def get_ai_insight():
-    data = request.get_json()
-    print("Received AI insight request:", data)
+    try:
+        insight_response = generate_ai_insights(
+            current_user.id,
+            request.get_json(silent=True)
+        )
+    except AIInsightRequestError as error:
+        return jsonify({'error': str(error)}), 400
+    except AIInsightLimitError as error:
+        return jsonify({'error': str(error)}), 429
+    except AIInsightProviderError as error:
+        return jsonify({'error': str(error)}), 503
 
-    # Temporary structured response used to build and test the card UI.
-    # A later LLM service will return this same shape with real, data-grounded text.
-    return jsonify({
-        "period": data.get("period") if data else None,
-        "insights": [
-            {
-                "type": "change",
-                "title": "Sample change insight",
-                "message": (
-                    "This card will explain a meaningful change between the "
-                    "selected period and its previous equivalent period."
-                ),
-                "evidence": "Uses period comparisons from the dashboard."
-            },
-            {
-                "type": "pattern",
-                "title": "Sample pattern insight",
-                "message": (
-                    "This card will highlight a pattern that may be difficult "
-                    "to notice by reading the charts separately."
-                ),
-                "evidence": "Uses activity, hourly focus, and session patterns."
-            },
-            {
-                "type": "suggestion",
-                "title": "Sample next-step insight",
-                "message": (
-                    "This card will offer one small, practical suggestion "
-                    "grounded in the selected period's data."
-                ),
-                "evidence": "Uses the strongest relevant dashboard pattern."
-            }
-        ]
-    })
+    return jsonify(insight_response)

@@ -67,6 +67,11 @@
     outline-offset: 3px;
 }
 
+.ai-insight-generate-button:disabled {
+    cursor: wait;
+    opacity: 0.72;
+}
+
 .ai-insight-empty {
     display: grid;
     min-height: 11rem;
@@ -94,6 +99,20 @@
 
 .ai-insight-cards {
     margin-top: 1.25rem;
+}
+
+.ai-insight-feedback {
+    margin: 1.25rem 0 0;
+    color: #9fb3d2;
+    font-size: 0.85rem;
+}
+
+.ai-insight-feedback--loading {
+    color: #c4b5fd;
+}
+
+.ai-insight-feedback--error {
+    color: #fda4af;
 }
 
 .ai-insight-card {

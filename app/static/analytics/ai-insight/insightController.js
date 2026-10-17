@@ -2,6 +2,8 @@
 import {
     renderInsightButtonAndPlaceHolder,
     renderInsightEmptyState,
+    renderInsightError,
+    renderInsightLoading,
     renderInsightResponse
 } from './insightRenderer.js';
 import {
@@ -35,8 +37,14 @@ export function initializeAiInsightFeature() {
         // 4 create payload through insight payload
         const payload = createInsightPayload(dashboardData);
 
+        if (!payload) {
+            renderInsightError('Analytics is still loading. Please try again in a moment.');
+            return;
+        }
+
         try {
             // 5 send the payload to server through service
+            renderInsightLoading();
             const insightData = await getAiInsight(payload);
 
             // 6 receive the response from the server
@@ -44,6 +52,7 @@ export function initializeAiInsightFeature() {
             renderInsightResponse(insightData);
         } catch (error) {
             console.error('Unable to get an AI insight:', error);
+            renderInsightError(error.message);
         }
     });
 }
