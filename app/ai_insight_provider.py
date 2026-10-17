@@ -221,7 +221,8 @@ def generate_ai_insights(user_id, payload):
 
     _validate_payload(payload)
     payload_digest = _payload_hash(payload)
-    now = datetime.utcnow()
+
+    now = datetime.now()
     cached_generation = _cached_result(user_id, payload_digest)
 
     if cached_generation:

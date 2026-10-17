@@ -49,4 +49,4 @@ class AIInsightGeneration(db.Model):
     # The hash identifies a specific user, date range, and dashboard payload.
     payload_hash = db.Column(db.String(64), nullable=False, index=True)
     response_json = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now, index=True)
