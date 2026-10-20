@@ -38,7 +38,7 @@ class TimeSession(db.Model):
 
 
 class AIInsightGeneration(db.Model):
-    """A successful AI response, stored for request limits and result caching."""
+    """A successful AI response, stored for request limits and saved insights."""
 
     __tablename__ = 'ai_insight_generation'
 
@@ -48,5 +48,8 @@ class AIInsightGeneration(db.Model):
 
     # The hash identifies a specific user, date range, and dashboard payload.
     payload_hash = db.Column(db.String(64), nullable=False, index=True)
+    # These make saved insights discoverable when a user selects the same range.
+    period_start_date = db.Column(db.Date, nullable=False, index=True)
+    period_end_date = db.Column(db.Date, nullable=False, index=True)
     response_json = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now, index=True)

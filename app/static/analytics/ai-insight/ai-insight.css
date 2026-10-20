@@ -19,6 +19,12 @@
     gap: 0.8rem;
 }
 
+.ai-insight-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
 .ai-insight-icon {
     display: grid;
     width: 2.4rem;
@@ -68,6 +74,31 @@
 }
 
 .ai-insight-generate-button:disabled {
+    cursor: wait;
+    opacity: 0.72;
+}
+
+.ai-insight-generate-new-button {
+    border: 1px solid #405a80;
+    border-radius: 0.55rem;
+    padding: 0.58rem 0.8rem;
+    background: transparent;
+    color: #c4b5fd;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ai-insight-generate-new-button:hover {
+    border-color: #8b7cdd;
+    background: #172640;
+}
+
+.ai-insight-generate-new-button:focus-visible {
+    outline: 2px solid #c4b5fd;
+    outline-offset: 3px;
+}
+
+.ai-insight-generate-new-button:disabled {
     cursor: wait;
     opacity: 0.72;
 }
@@ -168,7 +199,12 @@
         flex-direction: column;
     }
 
-    .ai-insight-generate-button {
+    .ai-insight-actions {
+        flex-direction: column;
+    }
+
+    .ai-insight-generate-button,
+    .ai-insight-generate-new-button {
         width: 100%;
     }
 

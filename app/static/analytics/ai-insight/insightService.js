@@ -1,8 +1,6 @@
-// Send the payload to our Flask server and return its parsed JSON response.
-export async function getAiInsight(payload) {
-    console.log("sending the payload to the server");
-
-    const response = await fetch('/api/ai-insight', {
+// Send analytics data to one AI-insight endpoint and return its parsed response.
+async function postInsightRequest(url, payload) {
+    const response = await fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -17,4 +15,18 @@ export async function getAiInsight(payload) {
     }
 
     return response.json();
+}
+
+// Generate an insight, or explicitly bypass the exact-payload cache on request.
+export function getAiInsight(payload, generateNew = false) {
+    const endpoint = generateNew
+        ? '/api/ai-insight?new=true'
+        : '/api/ai-insight';
+
+    return postInsightRequest(endpoint, payload);
+}
+
+// Check whether the selected range already has a saved insight. This never calls Gemini.
+export function getSavedAiInsightStatus(payload) {
+    return postInsightRequest('/api/ai-insight/status', payload);
 }

@@ -44,13 +44,24 @@ export function renderInsightButtonAndPlaceHolder() {
     headingText.append(title, subtitle);
     heading.append(icon, headingText);
 
+    const actions = document.createElement('div');
+    actions.className = 'ai-insight-actions';
+
     const button = document.createElement('button');
     button.id = 'ai-insight-button';
     button.type = 'button';
     button.className = 'ai-insight-generate-button';
     button.textContent = 'Generate insights';
 
-    header.append(heading, button);
+    const generateNewButton = document.createElement('button');
+    generateNewButton.id = 'ai-insight-generate-new-button';
+    generateNewButton.type = 'button';
+    generateNewButton.className = 'ai-insight-generate-new-button';
+    generateNewButton.textContent = 'Generate new';
+    generateNewButton.hidden = true;
+
+    actions.append(button, generateNewButton);
+    header.append(heading, actions);
 
     const status = document.createElement('p');
     status.id = 'ai-insight-status';
@@ -62,13 +73,16 @@ export function renderInsightButtonAndPlaceHolder() {
     emptyState.className = 'ai-insight-empty';
 
     const emptyIcon = document.createElement('i');
+    emptyIcon.id = 'ai-insight-empty-icon';
     emptyIcon.className = 'bi bi-lightbulb';
     emptyIcon.setAttribute('aria-hidden', 'true');
 
     const emptyTitle = document.createElement('h3');
+    emptyTitle.id = 'ai-insight-empty-title';
     emptyTitle.textContent = 'Turn your analytics into useful observations';
 
     const emptyText = document.createElement('p');
+    emptyText.id = 'ai-insight-empty-text';
     emptyText.textContent = (
         'Generate insights to uncover changes, habits, and one practical next step.'
     );
@@ -85,6 +99,33 @@ export function renderInsightButtonAndPlaceHolder() {
     feedback.hidden = true;
 
     insightSection.append(header, status, emptyState, feedback, cards);
+}
+
+function setEmptyStateContent(iconClass, title, text) {
+    const icon = document.getElementById('ai-insight-empty-icon');
+    const emptyTitle = document.getElementById('ai-insight-empty-title');
+    const emptyText = document.getElementById('ai-insight-empty-text');
+
+    if (!icon || !emptyTitle || !emptyText) {
+        return;
+    }
+
+    icon.className = iconClass;
+    emptyTitle.textContent = title;
+    emptyText.textContent = text;
+}
+
+function formatGeneratedAt(generatedAt) {
+    const date = new Date(generatedAt);
+
+    if (Number.isNaN(date.getTime())) {
+        return 'an earlier time';
+    }
+
+    return date.toLocaleString([], {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+    });
 }
 
 function createInsightCard(insight) {
@@ -123,18 +164,63 @@ export function renderInsightEmptyState() {
     const feedback = document.getElementById('ai-insight-feedback');
     const cards = document.getElementById('ai-insight-cards');
     const button = document.getElementById('ai-insight-button');
+    const generateNewButton = document.getElementById('ai-insight-generate-new-button');
 
-    if (!status || !emptyState || !feedback || !cards || !button) {
+    if (!status || !emptyState || !feedback || !cards || !button || !generateNewButton) {
         return;
     }
 
     status.textContent = 'Insights cleared for the new selected period.';
     emptyState.hidden = false;
+    setEmptyStateContent(
+        'bi bi-lightbulb',
+        'Turn your analytics into useful observations',
+        'Generate insights to uncover changes, habits, and one practical next step.'
+    );
     feedback.hidden = true;
     feedback.className = 'ai-insight-feedback';
     cards.replaceChildren();
     button.disabled = false;
     button.textContent = 'Generate insights';
+    generateNewButton.hidden = true;
+    generateNewButton.disabled = false;
+}
+
+// Offer a saved response when the user revisits a date range without generating again.
+export function renderSavedInsightAvailable(savedInsight) {
+    const status = document.getElementById('ai-insight-status');
+    const emptyState = document.getElementById('ai-insight-empty');
+    const feedback = document.getElementById('ai-insight-feedback');
+    const cards = document.getElementById('ai-insight-cards');
+    const button = document.getElementById('ai-insight-button');
+    const generateNewButton = document.getElementById('ai-insight-generate-new-button');
+
+    if (!status || !emptyState || !feedback || !cards || !button || !generateNewButton) {
+        return;
+    }
+
+    const dataChanged = !savedInsight.matchesCurrentData;
+    const generatedAt = formatGeneratedAt(savedInsight.generatedAt);
+
+    status.textContent = dataChanged
+        ? 'A previous insight is available, but analytics data has changed.'
+        : 'A saved insight is available for this selected period.';
+    emptyState.hidden = false;
+    setEmptyStateContent(
+        dataChanged ? 'bi bi-arrow-repeat' : 'bi bi-bookmark-check',
+        dataChanged ? 'A previous insight is saved for this range' : 'An insight is saved for this range',
+        dataChanged
+            ? `Generated ${generatedAt}. View it, or generate an updated insight.`
+            : `Generated ${generatedAt}. View it, or ask for a new insight.`
+    );
+    feedback.hidden = true;
+    feedback.className = 'ai-insight-feedback';
+    cards.replaceChildren();
+    button.disabled = false;
+    button.textContent = dataChanged ? 'View previous insight' : 'View saved insight';
+    generateNewButton.hidden = false;
+    generateNewButton.disabled = false;
+    generateNewButton.textContent = dataChanged ? 'Generate updated' : 'Generate new';
 }
 
 // Show an in-panel progress message while the server is working.
@@ -144,8 +230,9 @@ export function renderInsightLoading() {
     const feedback = document.getElementById('ai-insight-feedback');
     const cards = document.getElementById('ai-insight-cards');
     const button = document.getElementById('ai-insight-button');
+    const generateNewButton = document.getElementById('ai-insight-generate-new-button');
 
-    if (!status || !emptyState || !feedback || !cards || !button) {
+    if (!status || !emptyState || !feedback || !cards || !button || !generateNewButton) {
         return;
     }
 
@@ -156,6 +243,7 @@ export function renderInsightLoading() {
     feedback.textContent = 'Looking for useful patterns in your selected period…';
     cards.replaceChildren();
     button.disabled = true;
+    generateNewButton.disabled = true;
     button.textContent = 'Generating…';
 }
 
@@ -166,8 +254,9 @@ export function renderInsightError(message) {
     const feedback = document.getElementById('ai-insight-feedback');
     const cards = document.getElementById('ai-insight-cards');
     const button = document.getElementById('ai-insight-button');
+    const generateNewButton = document.getElementById('ai-insight-generate-new-button');
 
-    if (!status || !emptyState || !feedback || !cards || !button) {
+    if (!status || !emptyState || !feedback || !cards || !button || !generateNewButton) {
         return;
     }
 
@@ -179,18 +268,21 @@ export function renderInsightError(message) {
     cards.replaceChildren();
     button.disabled = false;
     button.textContent = 'Try again';
+    generateNewButton.hidden = true;
+    generateNewButton.disabled = false;
 }
 
 // Render structured insight cards returned by the server.
-export function renderInsightResponse(insightData) {
+export function renderInsightResponse(insightData, savedGeneratedAt = null) {
     const status = document.getElementById('ai-insight-status');
     const emptyState = document.getElementById('ai-insight-empty');
     const feedback = document.getElementById('ai-insight-feedback');
     const cards = document.getElementById('ai-insight-cards');
     const button = document.getElementById('ai-insight-button');
+    const generateNewButton = document.getElementById('ai-insight-generate-new-button');
     console.log("Rendering AI insight response:", insightData);
 
-    if (!status || !emptyState || !feedback || !cards || !button || !Array.isArray(insightData.insights)) {
+    if (!status || !emptyState || !feedback || !cards || !button || !generateNewButton || !Array.isArray(insightData.insights)) {
         return;
     }
 
@@ -199,7 +291,9 @@ export function renderInsightResponse(insightData) {
     feedback.hidden = false;
     feedback.className = 'ai-insight-feedback';
 
-    if (insightData.meta?.cached) {
+    if (savedGeneratedAt) {
+        feedback.textContent = `Showing insight generated ${formatGeneratedAt(savedGeneratedAt)}.`;
+    } else if (insightData.meta?.cached) {
         feedback.textContent = 'Showing saved insights for this data. No new generation was used.';
     } else {
         const remaining = insightData.meta?.remainingGenerations;
@@ -210,5 +304,7 @@ export function renderInsightResponse(insightData) {
 
     cards.replaceChildren(...insightData.insights.map(createInsightCard));
     button.disabled = false;
-    button.textContent = 'Generate again';
+    button.textContent = 'Generate new insight';
+    generateNewButton.hidden = true;
+    generateNewButton.disabled = false;
 }

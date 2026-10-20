@@ -6,6 +6,7 @@ from .ai_insight_provider import (
     AIInsightLimitError,
     AIInsightProviderError,
     AIInsightRequestError,
+    get_saved_ai_insight_status,
     generate_ai_insights
 )
 from . import db
@@ -411,7 +412,8 @@ def get_ai_insight():
     try:
         insight_response = generate_ai_insights(
             current_user.id,
-            request.get_json(silent=True)
+            request.get_json(silent=True),
+            allow_cached_result=request.args.get('new') != 'true'
         )
     except AIInsightRequestError as error:
         return jsonify({'error': str(error)}), 400
@@ -421,3 +423,21 @@ def get_ai_insight():
         return jsonify({'error': str(error)}), 503
 
     return jsonify(insight_response)
+
+
+@main.route('/api/ai-insight/status', methods=["POST"])
+@login_required
+def get_saved_ai_insight():
+    """Check for a saved insight without generating a new AI response."""
+
+    try:
+        status = get_saved_ai_insight_status(
+            current_user.id,
+            request.get_json(silent=True)
+        )
+    except AIInsightRequestError as error:
+        return jsonify({'error': str(error)}), 400
+    except AIInsightProviderError as error:
+        return jsonify({'error': str(error)}), 503
+
+    return jsonify(status)

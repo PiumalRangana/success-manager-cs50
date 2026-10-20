@@ -8,7 +8,7 @@ responses. It never exposes the provider key to the browser.
 import hashlib
 import json
 import os
-from datetime import datetime
+from datetime import date, datetime
 
 from google import genai
 
@@ -70,6 +70,21 @@ def _validate_payload(payload):
     if not period.get('startDate') or not period.get('endDate'):
         raise AIInsightRequestError('The selected date range was incomplete. Please try again.')
 
+    _period_dates(payload)
+
+
+def _period_dates(payload):
+    """Convert the browser's ISO date range into database lookup values."""
+
+    try:
+        period = payload['period']
+        return (
+            date.fromisoformat(period['startDate']),
+            date.fromisoformat(period['endDate'])
+        )
+    except (KeyError, TypeError, ValueError) as error:
+        raise AIInsightRequestError('The selected date range was invalid. Please try again.') from error
+
 
 def _payload_hash(payload):
     serialized_payload = json.dumps(payload, sort_keys=True, separators=(',', ':'))
@@ -93,6 +108,45 @@ def _cached_result(user_id, payload_hash):
         user_id=user_id,
         payload_hash=payload_hash
     ).order_by(AIInsightGeneration.created_at.desc()).first()
+
+
+def _latest_saved_result(user_id, period_start_date, period_end_date):
+    """Find the newest insight previously generated for one selected range."""
+
+    return AIInsightGeneration.query.filter_by(
+        user_id=user_id,
+        period_start_date=period_start_date,
+        period_end_date=period_end_date
+    ).order_by(AIInsightGeneration.created_at.desc()).first()
+
+
+def _saved_response(generation):
+    try:
+        return json.loads(generation.response_json)
+    except (TypeError, ValueError) as error:
+        raise AIInsightProviderError('A saved AI insight could not be read.') from error
+
+
+def get_saved_ai_insight_status(user_id, payload):
+    """Return saved-insight availability without calling Gemini."""
+
+    _validate_payload(payload)
+    period_start_date, period_end_date = _period_dates(payload)
+    saved_generation = _latest_saved_result(
+        user_id,
+        period_start_date,
+        period_end_date
+    )
+
+    if not saved_generation:
+        return {'exists': False}
+
+    return {
+        'exists': True,
+        'matchesCurrentData': saved_generation.payload_hash == _payload_hash(payload),
+        'generatedAt': saved_generation.created_at.isoformat(timespec='seconds'),
+        'insight': _saved_response(saved_generation)
+    }
 
 
 def _enforce_generation_limits(user_id, now):
@@ -216,17 +270,18 @@ def _generate_with_gemini(payload):
     return _validate_provider_response(provider_response)
 
 
-def generate_ai_insights(user_id, payload):
-    """Return cached or newly generated insight cards for one authenticated user."""
+def generate_ai_insights(user_id, payload, allow_cached_result=True):
+    """Return a saved or newly generated insight for one authenticated user."""
 
     _validate_payload(payload)
     payload_digest = _payload_hash(payload)
+    period_start_date, period_end_date = _period_dates(payload)
 
     now = datetime.now()
     cached_generation = _cached_result(user_id, payload_digest)
 
-    if cached_generation:
-        cached_response = json.loads(cached_generation.response_json)
+    if cached_generation and allow_cached_result:
+        cached_response = _saved_response(cached_generation)
         cached_response['meta'] = {
             'cached': True,
             'remainingGenerations': _remaining_generations(user_id, now)
@@ -242,6 +297,8 @@ def generate_ai_insights(user_id, payload):
     generation = AIInsightGeneration(
         user_id=user_id,
         payload_hash=payload_digest,
+        period_start_date=period_start_date,
+        period_end_date=period_end_date,
         response_json=json.dumps(response),
         created_at=now
     )
