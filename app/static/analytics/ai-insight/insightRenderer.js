@@ -1,3 +1,5 @@
+// Older saved responses used three cards. Keep their renderer so existing
+// saved insights remain readable while new responses use one report.
 const insightTypeLabels = {
     change: 'What changed',
     pattern: 'Pattern noticed',
@@ -34,11 +36,11 @@ export function renderInsightButtonAndPlaceHolder() {
     const title = document.createElement('h2');
     title.id = 'ai-insight-title';
     title.className = 'ai-insight-title';
-    title.textContent = 'AI Insights';
+    title.textContent = 'AI Focus Report';
 
     const subtitle = document.createElement('p');
     subtitle.className = 'ai-insight-subtitle';
-    subtitle.textContent = 'Highlights from your selected period';
+    subtitle.textContent = 'A concise reading of your selected period';
 
     const headingText = document.createElement('div');
     headingText.append(title, subtitle);
@@ -51,7 +53,7 @@ export function renderInsightButtonAndPlaceHolder() {
     button.id = 'ai-insight-button';
     button.type = 'button';
     button.className = 'ai-insight-generate-button';
-    button.textContent = 'Generate insights';
+    button.textContent = 'Generate report';
 
     const generateNewButton = document.createElement('button');
     generateNewButton.id = 'ai-insight-generate-new-button';
@@ -79,12 +81,12 @@ export function renderInsightButtonAndPlaceHolder() {
 
     const emptyTitle = document.createElement('h3');
     emptyTitle.id = 'ai-insight-empty-title';
-    emptyTitle.textContent = 'Turn your analytics into useful observations';
+    emptyTitle.textContent = 'Turn your analytics into a useful focus report';
 
     const emptyText = document.createElement('p');
     emptyText.id = 'ai-insight-empty-text';
     emptyText.textContent = (
-        'Generate insights to uncover changes, habits, and one practical next step.'
+        'Generate a report to uncover changes, habits, and one practical next step.'
     );
 
     emptyState.append(emptyIcon, emptyTitle, emptyText);
@@ -128,7 +130,7 @@ function formatGeneratedAt(generatedAt) {
     });
 }
 
-function createInsightCard(insight) {
+function createLegacyInsightCard(insight) {
     const column = document.createElement('div');
     column.className = 'col-12 col-md-4';
 
@@ -157,6 +159,27 @@ function createInsightCard(insight) {
     return column;
 }
 
+function createInsightReport(report) {
+    const column = document.createElement('div');
+    column.className = 'col-12';
+
+    const reportCard = document.createElement('article');
+    reportCard.className = 'small-card ai-insight-report';
+
+    const label = document.createElement('p');
+    label.className = 'ai-insight-card-type';
+    label.textContent = 'Your focus report';
+
+    const content = document.createElement('p');
+    content.className = 'ai-insight-report-content';
+    content.textContent = report;
+
+    reportCard.append(label, content);
+    column.append(reportCard);
+
+    return column;
+}
+
 // Return to the empty state when Analytics publishes a new date-range dashboard.
 export function renderInsightEmptyState() {
     const status = document.getElementById('ai-insight-status');
@@ -170,18 +193,18 @@ export function renderInsightEmptyState() {
         return;
     }
 
-    status.textContent = 'Insights cleared for the new selected period.';
+    status.textContent = 'Focus report cleared for the new selected period.';
     emptyState.hidden = false;
     setEmptyStateContent(
         'bi bi-lightbulb',
-        'Turn your analytics into useful observations',
-        'Generate insights to uncover changes, habits, and one practical next step.'
+        'Turn your analytics into a useful focus report',
+        'Generate a report to uncover changes, habits, and one practical next step.'
     );
     feedback.hidden = true;
     feedback.className = 'ai-insight-feedback';
     cards.replaceChildren();
     button.disabled = false;
-    button.textContent = 'Generate insights';
+    button.textContent = 'Generate report';
     generateNewButton.hidden = true;
     generateNewButton.disabled = false;
 }
@@ -203,27 +226,27 @@ export function renderSavedInsightAvailable(savedInsight) {
     const generatedAt = formatGeneratedAt(savedInsight.generatedAt);
 
     status.textContent = dataChanged
-        ? 'A previous insight is available, but analytics data has changed.'
-        : 'A saved insight is available for this selected period.';
+        ? 'A previous report is available, but analytics data has changed.'
+        : 'A saved report is available for this selected period.';
     emptyState.hidden = false;
     setEmptyStateContent(
         dataChanged ? 'bi bi-arrow-repeat' : 'bi bi-bookmark-check',
-        dataChanged ? 'A previous insight is saved for this range' : 'An insight is saved for this range',
+        dataChanged ? 'A previous report is saved for this range' : 'A report is saved for this range',
         dataChanged
-            ? `Generated ${generatedAt}. View it, or generate an updated insight.`
-            : `Generated ${generatedAt}. View it, or ask for a new insight.`
+            ? `Generated ${generatedAt}. View it, or generate an updated report.`
+            : `Generated ${generatedAt}. View it, or ask for a new report.`
     );
     feedback.hidden = true;
     feedback.className = 'ai-insight-feedback';
     cards.replaceChildren();
     button.disabled = false;
-    button.textContent = dataChanged ? 'View previous insight' : 'View saved insight';
+    button.textContent = dataChanged ? 'View previous report' : 'View saved report';
     generateNewButton.hidden = false;
     generateNewButton.disabled = false;
-    generateNewButton.textContent = dataChanged ? 'Generate updated' : 'Generate new';
+    generateNewButton.textContent = dataChanged ? 'Generate updated report' : 'Generate new report';
 }
 
-// Show an in-panel progress message while the server is working.
+// Show an in-panel progress message while the server is creating a report.
 export function renderInsightLoading() {
     const status = document.getElementById('ai-insight-status');
     const emptyState = document.getElementById('ai-insight-empty');
@@ -236,7 +259,7 @@ export function renderInsightLoading() {
         return;
     }
 
-    status.textContent = 'Generating AI insights.';
+    status.textContent = 'Generating AI focus report.';
     emptyState.hidden = true;
     feedback.hidden = false;
     feedback.className = 'ai-insight-feedback ai-insight-feedback--loading';
@@ -272,7 +295,7 @@ export function renderInsightError(message) {
     generateNewButton.disabled = false;
 }
 
-// Render structured insight cards returned by the server.
+// Render a new plain-text report, or legacy cards from a previously saved response.
 export function renderInsightResponse(insightData, savedGeneratedAt = null) {
     const status = document.getElementById('ai-insight-status');
     const emptyState = document.getElementById('ai-insight-empty');
@@ -280,31 +303,36 @@ export function renderInsightResponse(insightData, savedGeneratedAt = null) {
     const cards = document.getElementById('ai-insight-cards');
     const button = document.getElementById('ai-insight-button');
     const generateNewButton = document.getElementById('ai-insight-generate-new-button');
-    console.log("Rendering AI insight response:", insightData);
+    const hasReport = typeof insightData.report === 'string';
+    const hasLegacyInsights = Array.isArray(insightData.insights);
 
-    if (!status || !emptyState || !feedback || !cards || !button || !generateNewButton || !Array.isArray(insightData.insights)) {
+    if (!status || !emptyState || !feedback || !cards || !button || !generateNewButton || (!hasReport && !hasLegacyInsights)) {
         return;
     }
 
-    status.textContent = 'Insights are ready.';
+    status.textContent = hasReport ? 'Focus report is ready.' : 'Saved insights are ready.';
     emptyState.hidden = true;
     feedback.hidden = false;
     feedback.className = 'ai-insight-feedback';
 
     if (savedGeneratedAt) {
-        feedback.textContent = `Showing insight generated ${formatGeneratedAt(savedGeneratedAt)}.`;
+        feedback.textContent = `Showing report generated ${formatGeneratedAt(savedGeneratedAt)}.`;
     } else if (insightData.meta?.cached) {
-        feedback.textContent = 'Showing saved insights for this data. No new generation was used.';
+        feedback.textContent = 'Showing saved report for this data. No new generation was used.';
     } else {
         const remaining = insightData.meta?.remainingGenerations;
         feedback.textContent = Number.isInteger(remaining)
             ? `${remaining} AI generation${remaining === 1 ? '' : 's'} remaining today.`
-            : 'Insights generated.';
+            : 'Report generated.';
     }
 
-    cards.replaceChildren(...insightData.insights.map(createInsightCard));
+    const responseContent = hasReport
+        ? [createInsightReport(insightData.report)]
+        : insightData.insights.map(createLegacyInsightCard);
+
+    cards.replaceChildren(...responseContent);
     button.disabled = false;
-    button.textContent = 'Generate new insight';
+    button.textContent = 'Generate new report';
     generateNewButton.hidden = true;
     generateNewButton.disabled = false;
 }

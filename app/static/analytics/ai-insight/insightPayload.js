@@ -49,14 +49,38 @@ function buildActivityPattern(dailyActivity, dayCount) {
     };
 }
 
-function buildComparison(period, comparison) {
-    if (!period || !comparison) {
+function buildSummary(summary) {
+    return {
+        totalFocusMinutes: round(summary.totalFocusMinutes),
+        totalSessions: summary.totalSessions,
+        activeDays: summary.activeDays,
+        activeDayRate: round(summary.activeDayRate),
+        averageDailyFocusMinutes: round(summary.averageDailyFocusMinutes),
+        averageSessionLengthMinutes: round(summary.averageSessionLengthMinutes),
+        sessionsPerDay: round(summary.sessionsPerDay)
+    };
+}
+
+function buildPeriod(period) {
+    if (!period) {
         return null;
     }
 
     return {
-        period: formatRange(period.stats.range),
+        range: formatRange(period.stats.range),
         isEqualLength: period.isEqualLength,
+        summary: buildSummary(period.stats.summary)
+    };
+}
+
+function buildComparison(fromPeriod, toPeriod, comparison) {
+    if (!comparison) {
+        return null;
+    }
+
+    return {
+        fromPeriod,
+        toPeriod,
         mode: comparison.mode,
         metrics: comparison.metrics
     };
@@ -83,28 +107,26 @@ export function createInsightPayload(dashboardData) {
     }
 
     const { stats } = selected;
-    const { summary, consistency } = stats;
+    const { consistency } = stats;
+    const periods = {
+        previous: buildPeriod(dashboardData.periods.previous),
+        selected: buildPeriod(selected),
+        present: buildPeriod(dashboardData.periods.present)
+    };
 
-    // This is the full first-version input contract. It supports one change,
-    // one pattern, and one next-step insight without exposing raw sessions.
+    // This is the full first-version input contract. It supports a concise,
+    // data-grounded report across three labeled periods without exposing raw sessions.
     return {
-        period: formatRange(stats.range),
-        summary: {
-            totalFocusMinutes: round(summary.totalFocusMinutes),
-            totalSessions: summary.totalSessions,
-            activeDays: summary.activeDays,
-            activeDayRate: round(summary.activeDayRate),
-            averageDailyFocusMinutes: round(summary.averageDailyFocusMinutes),
-            averageSessionLengthMinutes: round(summary.averageSessionLengthMinutes),
-            sessionsPerDay: round(summary.sessionsPerDay)
-        },
+        periods,
         comparisons: {
-            previous: buildComparison(
-                dashboardData.periods.previous,
+            previousToSelected: buildComparison(
+                'previous',
+                'selected',
                 dashboardData.comparisons.previousToSelected
             ),
-            present: buildComparison(
-                dashboardData.periods.present,
+            selectedToPresent: buildComparison(
+                'selected',
+                'present',
                 dashboardData.comparisons.selectedToPresent
             )
         },

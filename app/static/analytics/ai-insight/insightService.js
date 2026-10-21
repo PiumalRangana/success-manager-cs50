@@ -10,7 +10,7 @@ async function postInsightRequest(url, payload) {
 
     if (!response.ok) {
         const errorBody = await response.json().catch(() => null);
-        const message = errorBody?.error || 'Unable to generate AI insights.';
+        const message = errorBody?.error || 'Unable to generate the AI focus report.';
         throw new Error(message);
     }
 

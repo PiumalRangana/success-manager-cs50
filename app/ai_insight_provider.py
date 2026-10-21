@@ -16,33 +16,9 @@ from . import db
 from .models import AIInsightGeneration
 
 
-DAILY_GENERATION_LIMIT = 3
+DAILY_GENERATION_LIMIT = 20
 COOLDOWN_SECONDS = 60
 MODEL_NAME = os.getenv('GEMINI_MODEL', 'gemini-3.8-flash')
-EXPECTED_INSIGHT_TYPES = {'change', 'pattern', 'suggestion'}
-
-INSIGHT_RESPONSE_SCHEMA = {
-    'type': 'object',
-    'properties': {
-        'insights': {
-            'type': 'array',
-            'items': {
-                'type': 'object',
-                'properties': {
-                    'type': {
-                        'type': 'string',
-                        'enum': ['change', 'pattern', 'suggestion']
-                    },
-                    'title': {'type': 'string'},
-                    'message': {'type': 'string'},
-                    'evidence': {'type': 'string'}
-                },
-                'required': ['type', 'title', 'message', 'evidence']
-            }
-        }
-    },
-    'required': ['insights']
-}
 
 
 class AIInsightRequestError(Exception):
@@ -61,13 +37,23 @@ def _validate_payload(payload):
     if not isinstance(payload, dict):
         raise AIInsightRequestError('Analytics data was not available. Please try again.')
 
-    period = payload.get('period')
-    summary = payload.get('summary')
+    periods = payload.get('periods')
 
-    if not isinstance(period, dict) or not isinstance(summary, dict):
+    if not isinstance(periods, dict):
         raise AIInsightRequestError('Analytics data was incomplete. Please try again.')
 
-    if not period.get('startDate') or not period.get('endDate'):
+    selected = periods.get('selected')
+    previous = periods.get('previous')
+
+    if not isinstance(selected, dict) or not isinstance(previous, dict):
+        raise AIInsightRequestError('Analytics periods were incomplete. Please try again.')
+
+    selected_range = selected.get('range')
+
+    if not isinstance(selected_range, dict) or not isinstance(selected.get('summary'), dict):
+        raise AIInsightRequestError('Selected analytics data was incomplete. Please try again.')
+
+    if not selected_range.get('startDate') or not selected_range.get('endDate'):
         raise AIInsightRequestError('The selected date range was incomplete. Please try again.')
 
     _period_dates(payload)
@@ -77,10 +63,10 @@ def _period_dates(payload):
     """Convert the browser's ISO date range into database lookup values."""
 
     try:
-        period = payload['period']
+        selected_range = payload['periods']['selected']['range']
         return (
-            date.fromisoformat(period['startDate']),
-            date.fromisoformat(period['endDate'])
+            date.fromisoformat(selected_range['startDate']),
+            date.fromisoformat(selected_range['endDate'])
         )
     except (KeyError, TypeError, ValueError) as error:
         raise AIInsightRequestError('The selected date range was invalid. Please try again.') from error
@@ -154,7 +140,7 @@ def _enforce_generation_limits(user_id, now):
 
     if remaining_generations <= 0:
         raise AIInsightLimitError(
-            'You have reached today\'s limit of 3 AI insight generations.'
+            f'You have reached today\'s limit of {DAILY_GENERATION_LIMIT} AI insight generations.'
         )
 
     latest_generation = AIInsightGeneration.query.filter_by(
@@ -186,62 +172,54 @@ facts that appear in that data. Do not invent numbers, trends, events, or task
 details. Do not make claims about personality, mental health, motivation, or
 medical matters.
 
-Return exactly three insights: one `change`, one `pattern`, and one `suggestion`.
-Each insight needs a short title, a concise message, and an evidence sentence
-that refers to the supplied data. The suggestion must be practical, small, and
-grounded in the identified pattern. If the present comparison has mode
-`normalized`, do not compare raw totals for that comparison.
+Period meanings:
+- `periods.selected` is the exact date range chosen by the user. Its summary
+  and detailed patterns are the main subject of this report.
+- `periods.previous` is the equal-length period immediately before the selected
+  period. Use `comparisons.previousToSelected` to describe how the user changed
+  from previous to selected.
+- `periods.present` is null when the selected range includes today. Otherwise it
+  is the newest period after the selected range that ends today. Use
+  `comparisons.selectedToPresent` to describe what happened after the selected
+  period.
+- Every comparison metric's `from` value belongs to `fromPeriod` and its `to`
+  value belongs to `toPeriod`.
+- A comparison with mode `full` has equal-length periods, so totals and rates
+  are comparable. A comparison with mode `normalized` has a shorter present
+  period; use only rate, average, and per-day metrics from that comparison.
+  Never compare or draw conclusions from raw totals, total sessions, or active
+  days for a normalized comparison, even if those totals appear in a summary.
+
+Return one concise plain-text focus report. Do not return JSON, Markdown,
+bullet lists, or code fences. Use these headings exactly, each on its own line:
+
+What changed
+Pattern noticed
+Try next
+
+Write one short data-grounded paragraph below each heading. The final section
+must suggest one practical, small adjustment. Use the selected period's
+patterns and every available comparison. When a present period exists, include
+one material observation from both `previousToSelected` and
+`selectedToPresent` somewhere in the report. Do not mention a present period
+when it is null. Do not list every metric: choose only the findings that make
+the report useful. Keep the entire report under 1,200 characters.
 
 Analytics JSON:
 {payload_json}
 """.strip()
 
 
-def _clean_text(value, maximum_length):
-    if not isinstance(value, str):
-        raise AIInsightProviderError('Gemini returned an incomplete insight response.')
+def _validate_provider_report(report):
+    if not isinstance(report, str):
+        raise AIInsightProviderError('Gemini returned an unreadable focus report.')
 
-    cleaned_value = value.strip()
+    cleaned_report = report.strip()
 
-    if not cleaned_value or len(cleaned_value) > maximum_length:
-        raise AIInsightProviderError('Gemini returned an invalid insight response.')
+    if not cleaned_report or len(cleaned_report) > 1_200:
+        raise AIInsightProviderError('Gemini returned an invalid focus report.')
 
-    return cleaned_value
-
-
-def _validate_provider_response(raw_response):
-    if not isinstance(raw_response, dict) or not isinstance(raw_response.get('insights'), list):
-        raise AIInsightProviderError('Gemini returned an invalid insight response.')
-
-    insights = raw_response['insights']
-
-    if len(insights) != 3:
-        raise AIInsightProviderError('Gemini did not return all three requested insights.')
-
-    insights_by_type = {}
-
-    for insight in insights:
-        if not isinstance(insight, dict) or insight.get('type') not in EXPECTED_INSIGHT_TYPES:
-            raise AIInsightProviderError('Gemini returned an invalid insight type.')
-
-        insight_type = insight['type']
-
-        if insight_type in insights_by_type:
-            raise AIInsightProviderError('Gemini returned duplicate insight types.')
-
-        insights_by_type[insight_type] = {
-            'type': insight_type,
-            'title': _clean_text(insight.get('title'), 100),
-            'message': _clean_text(insight.get('message'), 420),
-            'evidence': _clean_text(insight.get('evidence'), 200)
-        }
-
-    if set(insights_by_type) != EXPECTED_INSIGHT_TYPES:
-        raise AIInsightProviderError('Gemini did not return the requested insight types.')
-
-    return [insights_by_type[insight_type] for insight_type in (
-        'change', 'pattern', 'suggestion'
-    )]
+    return cleaned_report
 
 
 def _generate_with_gemini(payload):
@@ -255,19 +233,17 @@ def _generate_with_gemini(payload):
         interaction = client.interactions.create(
             model=MODEL_NAME,
             input=_build_prompt(payload),
-            response_format={
-                'type': 'text',
-                'mime_type': 'application/json',
-                'schema': INSIGHT_RESPONSE_SCHEMA
+            # Keep the reasoning depth explicit so it can be tuned separately later.
+            generation_config={
+                'thinking_level': 'high'
             }
         )
-        provider_response = json.loads(interaction.output_text)
-    except (json.JSONDecodeError, TypeError, ValueError) as error:
-        raise AIInsightProviderError('Gemini returned an unreadable insight response.') from error
+    except (TypeError, ValueError) as error:
+        raise AIInsightProviderError('Gemini returned an unreadable focus report.') from error
     except Exception as error:
         raise AIInsightProviderError('AI Insights is temporarily unavailable. Please try again later.') from error
 
-    return _validate_provider_response(provider_response)
+    return _validate_provider_report(interaction.output_text)
 
 
 def generate_ai_insights(user_id, payload, allow_cached_result=True):
@@ -289,10 +265,10 @@ def generate_ai_insights(user_id, payload, allow_cached_result=True):
         return cached_response
 
     remaining_before_generation = _enforce_generation_limits(user_id, now)
-    insights = _generate_with_gemini(payload)
+    report = _generate_with_gemini(payload)
     response = {
-        'period': payload['period'],
-        'insights': insights
+        'period': payload['periods']['selected']['range'],
+        'report': report
     }
     generation = AIInsightGeneration(
         user_id=user_id,
