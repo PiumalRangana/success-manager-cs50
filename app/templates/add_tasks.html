@@ -9,6 +9,16 @@
         <div class="col my-5">
             <h2 class="text-light">Add Tasks</h2>
 
+            {% if errors %}
+            <div class="alert alert-danger" role="alert">
+                <ul class="mb-0">
+                    {% for error in errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
             <!--  form  -->
             <form action="/add_task" method="post">
 
@@ -16,19 +26,19 @@
                 <div class="form-group mb-4 text-start text-light">
                     <label for="task" class="form-label">New Task:</label>
                     <input type="text" name="task_txt" id="task_txt" placeholder="Enter a new task"
-                        class="form-control rounded-3 border-0" required>
+                        class="form-control rounded-3 border-0" value="{{ task_text or '' }}" maxlength="256" required>
                 </div>
                 
                 <!-- Is daily checkBox -->
                 <div class="form-group mb-4 text-start">
                     <label for="is_daily" class="form-chek-lable text-light">Daily task:</label>
-                    <input type="checkbox" class="form-check-input" id="is_daily" name="is_daily">
+                    <input type="checkbox" class="form-check-input" id="is_daily" name="is_daily" {% if is_daily %}checked{% endif %}>
                 </div>
 
                 <!-- color input field -->
                 <div class="form-group mb-4 text-start">
                     <label for="tsk_color" class="text-light">selct a coror :</label>
-                    <input type="color" id="tsk_color" name="tsk_color">
+                    <input type="color" id="tsk_color" name="tsk_color" value="{{ task_color or '#000000' }}">
                 </div>
                 <div class="d-grid mb-4">
                     <button class="btn btn-primary rounded-3" type="submit">Add Task</button>

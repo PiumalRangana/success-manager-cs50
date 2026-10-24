@@ -25,6 +25,10 @@
             {% endif %}
 
             <div class="chart-wrapper">
+                <div id="daily-chart-feedback" class="alert alert-warning" role="status" aria-live="polite" hidden>
+                    Visualizations are unavailable. Refresh and try again.
+                </div>
+
                 <!--daily time ring chart-->
                 <div class="chart" id="chart"></div>
 
@@ -44,6 +48,7 @@
                 </a>
 
             </div>
+            <div id="timer-feedback" class="alert mt-3" role="alert" aria-live="polite" hidden></div>
             <ul class="list-group my-5">
                 {% for task in tasks %}
                 <li class="list-group-item"

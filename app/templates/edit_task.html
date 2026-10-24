@@ -8,26 +8,40 @@
     <div class="row">
         <div class="col my-5">
             <h2 class="text-light">Edit Tasks</h2>
+            {% set current_task_text = task_text if task_text is defined else task.task_text %}
+            {% set current_is_daily = is_daily if is_daily is defined else task.is_daily %}
+            {% set current_task_color = task_color if task_color is defined else task.color %}
+
+            {% if errors %}
+            <div class="alert alert-danger" role="alert">
+                <ul class="mb-0">
+                    {% for error in errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
             <!-- form -->
             <form action="/edit_task/{{task.id}}" method="post">
 
                 <!-- Task name input box -->
                 <div class="form-group mb-4 text-start text-light">
                     <label for="task" class="form-label">Edit Task Name:</label>
-                    <input type="text" name="task_txt" id="task_txt" value="{{task.task_text}}"
-                        class="form-control rounded-3 border-0" required>
+                    <input type="text" name="task_txt" id="task_txt" value="{{ current_task_text }}"
+                        class="form-control rounded-3 border-0" maxlength="256" required>
                 </div>
                 
                 <!-- Is daily check box-->
                 <div class="form-group mb-4 text-start">
                     <label for="is_daily" class="form-chek-lable text-light">Daily task:</label>
-                    <input type="checkbox" class="form-check-input" id="is_daily" name="is_daily" {% if task.is_daily %}checked{% endif %}>
+                    <input type="checkbox" class="form-check-input" id="is_daily" name="is_daily" {% if current_is_daily %}checked{% endif %}>
                 </div>
 
                 <!-- Color select field -->
                 <div class="form-group mb-4 text-start">
                     <label for="tsk_color" class="text-light">selct a coror :</label>
-                    <input type="color" id="tsk_color" name="tsk_color" value="{{task.color}}">
+                    <input type="color" id="tsk_color" name="tsk_color" value="{{ current_task_color or '#000000' }}">
                 </div>
 
                 <!-- submit button -->

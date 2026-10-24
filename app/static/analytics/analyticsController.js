@@ -20,6 +20,69 @@ import { initializeSessionLengthDistribution } from './session-length-distributi
 import { initializePeriodComparison } from './period-comparison/controler.js';
 import { initializeAiInsightFeature } from './ai-insight/insightController.js';
 let activeDateRangeController = null;
+let failedDateRange = null;
+
+function hideAnalyticsError() {
+    const feedback = document.getElementById('analytics-feedback');
+
+    if (feedback) {
+        feedback.hidden = true;
+    }
+}
+
+function showAnalyticsError(message, canRetry = true) {
+    const feedback = document.getElementById('analytics-feedback');
+    const messageElement = document.getElementById('analytics-feedback-message');
+    const retryButton = document.getElementById('analytics-retry-button');
+
+    if (!feedback || !messageElement) {
+        return;
+    }
+
+    messageElement.textContent = message;
+    if (retryButton) {
+        retryButton.hidden = !canRetry;
+    }
+    feedback.hidden = false;
+}
+
+function hideAnalyticsEmptyState() {
+    const emptyState = document.getElementById('analytics-empty-state');
+
+    if (emptyState) {
+        emptyState.hidden = true;
+    }
+}
+
+function showAnalyticsEmptyState() {
+    const emptyState = document.getElementById('analytics-empty-state');
+
+    if (emptyState) {
+        emptyState.hidden = false;
+    }
+}
+
+function initializeAnalyticsErrorFeedback() {
+    const retryButton = document.getElementById('analytics-retry-button');
+
+    if (!retryButton) {
+        return;
+    }
+
+    retryButton.addEventListener('click', () => {
+        if (failedDateRange) {
+            applyDateRange(failedDateRange);
+        }
+    });
+}
+
+function analyticsVisualizationLibrariesAreAvailable() {
+    // CDN failures leave these globals undefined; checking once prevents each
+    // chart module from failing separately and leaving a blank dashboard.
+    return typeof window.flatpickr === 'function'
+        && typeof window.Chart === 'function'
+        && typeof window.ChartDataLabels !== 'undefined';
+}
 
 export async function applyDateRange([startDate, endDate]) {
     if (activeDateRangeController) {
@@ -31,10 +94,12 @@ export async function applyDateRange([startDate, endDate]) {
 
     setAnalyticsDateRange(startDate, endDate);
     setAnalyticsDashboard(null);
-
-    const periodPlan = createDashboardPeriodPlan(startDate, endDate);
+    failedDateRange = null;
+    hideAnalyticsError();
+    hideAnalyticsEmptyState();
 
     try {
+        const periodPlan = createDashboardPeriodPlan(startDate, endDate);
         const selectedSessionsPromise = fetchSessionsForDateRange(startDate, endDate, {
             signal: controller.signal
         });
@@ -88,12 +153,18 @@ export async function applyDateRange([startDate, endDate]) {
         setAnalyticsSessions(selectedSessions);
         setCalculatedAnalytics(calculatedAnalytics);
         setAnalyticsDashboard(dashboard);
+
+        if (dashboard.periods.selected.stats.summary.totalSessions === 0) {
+            showAnalyticsEmptyState();
+        }
     } catch (error) {
         if (error.name === 'AbortError') {
             return;
         }
 
         console.error('Error applying date range:', error);
+        failedDateRange = [startDate, endDate];
+        showAnalyticsError(error.message || 'Unable to load analytics. Please try again.');
     } finally {
         if (activeDateRangeController === controller) {
             activeDateRangeController = null;
@@ -102,6 +173,13 @@ export async function applyDateRange([startDate, endDate]) {
 }
 
 async function initializeAnalytics() {
+    initializeAnalyticsErrorFeedback();
+
+    if (!analyticsVisualizationLibrariesAreAvailable()) {
+        showAnalyticsError('Visualizations are unavailable. Refresh and try again.', false);
+        return;
+    }
+
     renderDateRangeSelector();
 
     const modalContainer = document.querySelector('#calendar-selector-form-modal-container');
@@ -126,4 +204,5 @@ async function initializeAnalytics() {
 
 initializeAnalytics().catch((error) => {
     console.error('Error initializing analytics:', error);
+    showAnalyticsError('Visualizations are unavailable. Refresh and try again.', false);
 });

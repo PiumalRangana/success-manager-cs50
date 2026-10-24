@@ -9,34 +9,40 @@ auth = Blueprint("auth", __name__)
 @auth.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        name = request.form.get("name")
-        email = request.form.get("email")
-        password = request.form.get("password")
-        confirm_password = request.form.get("confirm_password")
+        name = (request.form.get("name") or "").strip()
+        email = (request.form.get("email") or "").strip()
+        # Passwords are intentionally not stripped: spaces can be part of a
+        # user's chosen password and should be checked exactly as submitted.
+        password = request.form.get("password") or ""
+        confirm_password = request.form.get("confirm_password") or ""
 
         errors = []
 
         # ===== Validations =====
         # 1. Required fields
-        if not name or not email or not password or not confirm_password:
-            errors.append("All fields are required.")
+        if not name:
+            errors.append("Name is required.")
 
-        # 2. Email format check (very simple)
-        if "@" not in email or "." not in email:
+        if not email:
+            errors.append("Email is required.")
+        elif "@" not in email or "." not in email:
             errors.append("Invalid email address.")
 
-        # 3. Email uniqueness
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
-            errors.append("Email is already registered.")
-
-        # 4. Password length
-        if len(password) < 8:
+        if not password:
+            errors.append("Password is required.")
+        elif len(password) < 8:
             errors.append("Password must be at least 8 characters long.")
 
-        # 5. Password confirmation
-        if password != confirm_password:
+        if not confirm_password:
+            errors.append("Please confirm your password.")
+        elif password != confirm_password:
             errors.append("Passwords do not match.")
+
+        # Query only after basic email validation succeeds.
+        if email and "@" in email and "." in email:
+            existing_user = User.query.filter_by(email=email).first()
+            if existing_user:
+                errors.append("Email is already registered.")
 
         # ===== Handle errors =====
         if errors:
@@ -62,19 +68,20 @@ def register():
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form.get("email")
-        password = request.form.get("password")
+        email = (request.form.get("email") or "").strip()
+        password = request.form.get("password") or ""
 
         errors = []
 
         # ===== Validations =====
         # 1. Required fields
-        if not email or not password:
-            errors.append("All fields are required.")
-
-        # 2. Email format check
-        if "@" not in email or "." not in email:
+        if not email:
+            errors.append("Email is required.")
+        elif "@" not in email or "." not in email:
             errors.append("Invalid email address.")
+
+        if not password:
+            errors.append("Password is required.")
 
         # ===== Handle errors =====
         if errors:
@@ -82,15 +89,8 @@ def login():
         
         # ====== Authenticate User =====
         existing_user = User.query.filter_by(email=email).first()
-        if not existing_user:
-            errors.append("Invalid email.")
-        
-        if errors:
-            return render_template("login.html", errors=errors, email=email)
-        
-        # =====Check password=====
-        if not check_password_hash(existing_user.password_hash, password):
-            errors.append("Invalid password.")
+        if not existing_user or not check_password_hash(existing_user.password_hash, password):
+            errors.append("Invalid email or password.")
 
         if errors:
             return render_template("login.html", errors=errors, email=email)

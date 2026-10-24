@@ -12,7 +12,30 @@ from .ai_insight_provider import (
 from . import db
 from datetime import datetime, timedelta, time
 from sqlalchemy import or_,and_
+import re
 main = Blueprint('main', __name__)
+
+TASK_TEXT_MAX_LENGTH = 256
+TASK_COLOR_PATTERN = re.compile(r"^#[0-9A-Fa-f]{6}$")
+
+
+def validate_task_form(task_text, task_color):
+    """Return cleaned task text and user-facing validation errors."""
+
+    # Browser constraints improve the form experience, but requests can bypass
+    # them, so the server protects the database and colour helper as well.
+    cleaned_task_text = (task_text or "").strip()
+    errors = []
+
+    if not cleaned_task_text:
+        errors.append("Task name cannot be blank.")
+    elif len(cleaned_task_text) > TASK_TEXT_MAX_LENGTH:
+        errors.append(f"Task name must be {TASK_TEXT_MAX_LENGTH} characters or fewer.")
+
+    if not TASK_COLOR_PATTERN.fullmatch(task_color or ""):
+        errors.append("Choose a valid task color.")
+
+    return cleaned_task_text, errors
 
 
 def format_duration(total_seconds):
@@ -47,17 +70,30 @@ def login():
     return render_template("login.html")
 
 #add task route
-@login_required
+
 @main.route('/add_task',methods=["GET", "POST"])
+@login_required
 def add_task():
     if request.method == "POST":
-        task_text = request.form.get("task_txt")
-        is_daily = request.form.get("is_daily")
+        task_text, errors = validate_task_form(
+            request.form.get("task_txt"),
+            request.form.get("tsk_color")
+        )
+        is_daily = request.form.get("is_daily") == "on"
         task_color = request.form.get("tsk_color")
+
+        if errors:
+            return render_template(
+                "add_tasks.html",
+                errors=errors,
+                task_text=task_text,
+                is_daily=is_daily,
+                task_color=task_color
+            ), 400
         
         # Save to data base
         new_task = Task(user_id = session["user_id"], task_text = task_text, 
-                        is_daily = bool(is_daily), color = task_color)
+                        is_daily = is_daily, color = task_color)
 
         db.session.add(new_task)
         db.session.commit()
@@ -65,8 +101,8 @@ def add_task():
 
     return render_template("add_tasks.html")
 
-@login_required
 @main.route('/home',methods=["GET"])
+@login_required
 def home():
 
     user = {'user_id': current_user.id, 'user_name': current_user.name}
@@ -88,65 +124,95 @@ def home():
     return render_template('index.html', user=user, tasks=tasks)
 
 # Delete task route
-@login_required
 @main.route('/delete_task/<int:task_id>',methods=["POST"] )
+@login_required
 def delete_task(task_id):
-    task = Task.query.get(task_id)
-    if task and task.user_id == current_user.id:
-        
-        #check for timer sessions
-        timer_sessions_for_task = TimeSession.query.filter_by(user_id=current_user.id, task_id=task.id).first()
-        #if timer sessions exisists
-        if timer_sessions_for_task:
-            #soft delete
-            task.is_deleted = True
-            db.session.commit()
-            return redirect(url_for('main.home'))
-        
+    task = db.session.get(Task, task_id)
 
-        # if no timer sessions hard telete
-        db.session.delete(task)
+    if not task or task.is_deleted:
+        flash("Task no longer exists.", "info")
+        return redirect(url_for('main.home'))
+
+    if task.user_id != current_user.id:
+        flash("You're not authorized to delete this task.", "danger")
+        return redirect(url_for('main.home'))
+
+    #check for timer sessions
+    timer_sessions_for_task = TimeSession.query.filter_by(user_id=current_user.id, task_id=task.id).first()
+    #if timer sessions exisists
+    if timer_sessions_for_task:
+        #soft delete
+        task.is_deleted = True
         db.session.commit()
+        return redirect(url_for('main.home'))
+
+    # if no timer sessions hard telete
+    db.session.delete(task)
+    db.session.commit()
     return redirect(url_for('main.home'))
 
 # edit task route
-@login_required
 @main.route('/edit_task/<int:task_id>', methods=["GET","POST"])
+@login_required
 def edit_task(task_id):
-    # Send to edit task page if user task's user id == current user's id
-    task = Task.query.get(task_id)
-    if request.method == "GET":
-        if task and task.user_id == current_user.id:
-            return render_template('edit_task.html',task=task)
-    
-    # If method == post
-        # get the values for the task
-    task_text = request.form.get("task_txt")
-    is_daily = request.form.get("is_daily")
-    task_color = request.form.get("tsk_color")
-    # Verify task ownership
-    if not task or task.user_id != current_user.id:
-        flash("Task not found or you're not authorized to edit it.")
+    task = db.session.get(Task, task_id)
+
+    # Verify ownership before displaying or accepting changes to a task.
+    if not task or task.is_deleted:
+        flash("Task no longer exists.", "info")
         return redirect(url_for('main.home'))
+
+    if task.user_id != current_user.id:
+        flash("You're not authorized to edit this task.", "danger")
+        return redirect(url_for('main.home'))
+
+    if request.method == "GET":
+        return render_template('edit_task.html', task=task)
+    
+    task_text, errors = validate_task_form(
+        request.form.get("task_txt"),
+        request.form.get("tsk_color")
+    )
+    is_daily = request.form.get("is_daily") == "on"
+    task_color = request.form.get("tsk_color")
+
+    if errors:
+        return render_template(
+            'edit_task.html',
+            task=task,
+            errors=errors,
+            task_text=task_text,
+            is_daily=is_daily,
+            task_color=task_color
+        ), 400
 
     # Update fields
     task.task_text = task_text
-    task.is_daily = bool(is_daily)
+    task.is_daily = is_daily
     task.color = task_color
 
     db.session.commit()
-    flash("Task updated successfully.")
+    flash("Task updated successfully.", "success")
 
     return redirect(url_for('main.home'))
 
 # mark complete route
-@login_required
 @main.route('/complete_task/<int:task_id>', methods=["POST"])
+@login_required
 def complete_task(task_id):
-    task = Task.query.get(task_id)
-    if not task or task.user_id != current_user.id:
-        flash("Task not found or you're not authorized to edit it.")
+    task = db.session.get(Task, task_id)
+
+    if not task or task.is_deleted:
+        flash("Task no longer exists.", "info")
         return redirect(url_for('main.home'))
+
+    if task.user_id != current_user.id:
+        flash("You're not authorized to change this task.", "danger")
+        return redirect(url_for('main.home'))
+
+    if task.is_complete:
+        flash("This task is already completed.", "info")
+        return redirect(url_for('main.completed_tasks'))
     
     task.is_complete = True
     db.session.commit()
@@ -155,25 +221,44 @@ def complete_task(task_id):
     return redirect(url_for('main.home'))
 
 # Completed tasks get
-@login_required
 @main.route('/completed_tasks', methods=["GET"])
+@login_required
 def completed_tasks():
-    completed_tasks = Task.query.filter_by(user_id=current_user.id, is_complete = 1).all()
+    completed_tasks = Task.query.filter_by(
+        user_id=current_user.id,
+        is_complete=True,
+        is_deleted=False
+    ).all()
     return render_template("completed_tasks.html", completed_tasks = completed_tasks)
 
 # Completed tasks post
-@login_required
 @main.route('/completed_tasks_undo/<int:task_id>', methods=["POST"])
+@login_required
 def completed_tasks_undo(task_id):
-    if task_id:           
-        task = Task.query.get(task_id)
-        task.is_complete = False
-        db.session.commit()
+    task = db.session.get(Task, task_id)
+
+    # A submitted URL can be stale or belong to another account, so do not
+    # assume the task exists merely because it appeared in a previous page load.
+    if not task or task.is_deleted:
+        flash("Task no longer exists.", "info")
+        return redirect(url_for('main.completed_tasks'))
+
+    if task.user_id != current_user.id:
+        flash("You're not authorized to change this task.", "danger")
+        return redirect(url_for('main.completed_tasks'))
+
+    if not task.is_complete:
+        flash("This task is already active.", "info")
+        return redirect(url_for('main.home'))
+
+    task.is_complete = False
+    db.session.commit()
+    flash("Task moved back to your active tasks.", "success")
     return redirect(url_for('main.home'))
 
 # start timer
-@login_required
 @main.route('/timer/start', methods=['POST'])
+@login_required
 def start_timer():
 
     # Check if there's already a running timer for the user
@@ -201,8 +286,8 @@ def start_timer():
     }), 200
 
 # stop timer
-@login_required
 @main.route('/timer/stop', methods=['POST'])
+@login_required
 def stop_timer():
 
     # get the running time session
@@ -246,8 +331,8 @@ def stop_timer():
 # - We are currently operating fully in LOCAL TIME
 #   the frontend reconstructs time relative to "today".
 # -------------------------------------------------------------------
-@login_required
 @main.route('/api/sessions/daily')
+@login_required
 def get_time_ring_data():
     now = datetime.now()
 
@@ -282,13 +367,14 @@ def get_time_ring_data():
         for s in sessions
     ])
 
-@login_required
+
 @main.route('/analytics')
+@login_required
 def get_analytics_page():
     return render_template("analytics.html")
 
-@login_required
 @main.route('/api/analytics/sessions')
+@login_required
 def get_sessions_for_date_range():
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
@@ -323,8 +409,9 @@ def get_sessions_for_date_range():
         for s in sessions
     ])
 
-@login_required
+
 @main.route('/api/analytics/calculated', methods=["GET"])
+@login_required
 def get_calculated_analytics():
     # verify dates
     start_date = request.args.get("start_date")
