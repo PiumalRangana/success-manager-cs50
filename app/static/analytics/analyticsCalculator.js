@@ -20,6 +20,8 @@ export function parseLocalDate(dateLabel) {
     }
 
     const [, year, month, day] = match.map(Number);
+    // Construct from local parts: parsing "YYYY-MM-DD" directly can treat it as UTC
+    // and move the selected calendar day in local time.
     const date = new Date(year, month - 1, day);
 
     if (
@@ -86,6 +88,8 @@ function createSessionBoundary(session, rangeStart, rangeEndExclusive) {
         return null;
     }
 
+    // Sessions are selected by overlap, so clip both endpoints before totals are
+    // calculated. This excludes time outside the date range.
     const start = new Date(Math.max(sessionStart.getTime(), rangeStart.getTime()));
     const end = new Date(Math.min(sessionEnd.getTime(), rangeEndExclusive.getTime()));
 
@@ -221,6 +225,8 @@ export function buildPeriodStats(period) {
         task.minutes += sessionMinutes;
         taskTotals.set(taskKey, task);
 
+        // Split at local midnight and then each hour boundary so a long session
+        // contributes minutes to every correct day and hour bucket.
         let dayCursor = new Date(boundary.start);
 
         while (dayCursor < boundary.end) {

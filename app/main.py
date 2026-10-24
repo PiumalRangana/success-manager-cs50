@@ -324,7 +324,8 @@ def stop_timer():
 # -------------------------------------------------------------------
 # API: Get chart sessions (local time)
 # -------------------------------------------------------------------
-# Returns all time sessions that started today + previous days without end times.
+# Returns sessions that began today plus earlier sessions that are still relevant today.
+# Including those sessions lets an overnight or still-running timer be drawn from midnight.
 # Used by the D3 donut chart to render daily activity.
 #
 # Important:
@@ -340,6 +341,7 @@ def get_time_ring_data():
     today_start = datetime.combine(now.date(), time.min)
     today_end = datetime.combine(now.date(), time.max)
     
+    # The second branch keeps an overnight or still-running session in today's ring.
     sessions = TimeSession.query.filter(
         TimeSession.user_id == current_user.id,
         or_(
@@ -391,6 +393,8 @@ def get_sessions_for_date_range():
     if start_date_obj > end_date_obj:
         return jsonify({"error": "start_date must be before or equal to end_date"}), 400
 
+    # Fetch every session that overlaps the range. The browser clips each one to
+    # the selected dates before calculating charts, so cross-boundary time is not overstated.
     sessions = TimeSession.query.filter(
         TimeSession.user_id == current_user.id,
         TimeSession.start_time <= end_date_obj,
@@ -429,7 +433,8 @@ def get_calculated_analytics():
     if start_date_obj > end_date_obj:
         return jsonify({"error": "start_date must be before or equal to end_date"}), 400
 
-    # Query time sessions intersecting the date range for the current user
+    # Include every overlapping session, then clip it below to the requested range.
+    # A session crossing midnight must contribute only its in-range duration.
     sessions = TimeSession.query.filter(
         TimeSession.user_id == current_user.id,
         TimeSession.start_time <= end_date_obj,
@@ -442,6 +447,7 @@ def get_calculated_analytics():
     now = datetime.now()
 
     for time_session in sessions:
+        # Clip the overlapping session to both range boundaries before its duration is added.
         session_end_time = time_session.end_time or now
         session_start = max(time_session.start_time, start_date_obj)
         session_end = min(session_end_time, end_date_obj)

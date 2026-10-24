@@ -85,6 +85,8 @@ function analyticsVisualizationLibrariesAreAvailable() {
 }
 
 export async function applyDateRange([startDate, endDate]) {
+    // A fast range change can leave an older request in flight. Abort it so a
+    // late response cannot overwrite the newer dashboard data.
     if (activeDateRangeController) {
         activeDateRangeController.abort();
     }

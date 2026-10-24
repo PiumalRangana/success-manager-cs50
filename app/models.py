@@ -21,6 +21,7 @@ class Task(db.Model):
     is_complete = db.Column(db.Boolean, default=False, nullable=False)
     is_daily = db.Column(db.Boolean, default=False, nullable=False)
     color = db.Column(db.String(50))
+    # Soft deletion preserves task metadata that historic sessions need for analytics.
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
 class TimeSession(db.Model):

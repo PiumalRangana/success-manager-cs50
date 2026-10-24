@@ -1,6 +1,8 @@
 // Transform the shared dashboard into the smaller, AI-specific request payload.
 // This module reads dashboard data but never changes it.
 
+// Keep provider requests readable and bounded: long ranges are summarized and
+// only the most important tasks are sent.
 const MAX_DAILY_ACTIVITY_DAYS = 90;
 const MAX_TASKS = 8;
 

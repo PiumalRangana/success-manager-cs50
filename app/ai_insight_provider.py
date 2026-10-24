@@ -16,6 +16,8 @@ from . import db
 from .models import AIInsightGeneration
 
 
+# Keep AI use predictable: the cooldown prevents accidental repeat requests and
+# the daily cap limits provider cost for each user.
 DAILY_GENERATION_LIMIT = 20
 COOLDOWN_SECONDS = 60
 MODEL_NAME = os.getenv('GEMINI_MODEL', 'gemini-3.8-flash')
@@ -73,6 +75,8 @@ def _period_dates(payload):
 
 
 def _payload_hash(payload):
+    # Canonical JSON gives identical analytics data the same cache key. Database
+    # lookups also scope that key to the authenticated user.
     serialized_payload = json.dumps(payload, sort_keys=True, separators=(',', ':'))
     return hashlib.sha256(serialized_payload.encode('utf-8')).hexdigest()
 
@@ -90,6 +94,7 @@ def _remaining_generations(user_id, now):
 
 
 def _cached_result(user_id, payload_hash):
+    # An exact match can reuse a report without another provider request.
     return AIInsightGeneration.query.filter_by(
         user_id=user_id,
         payload_hash=payload_hash
@@ -136,6 +141,8 @@ def get_saved_ai_insight_status(user_id, payload):
 
 
 def _enforce_generation_limits(user_id, now):
+    # Cached reports are returned before this check, so viewing one never uses a
+    # daily generation or makes the user wait through the cooldown.
     remaining_generations = _remaining_generations(user_id, now)
 
     if remaining_generations <= 0:
@@ -162,6 +169,8 @@ def _enforce_generation_limits(user_id, now):
 
 
 def _build_prompt(payload):
+    # User-controlled task names are embedded below, so tell the model to treat
+    # the JSON as data. The unequal-period rule prevents misleading total comparisons.
     payload_json = json.dumps(payload, indent=2, sort_keys=True)
 
     return f"""
@@ -256,6 +265,7 @@ def generate_ai_insights(user_id, payload, allow_cached_result=True):
     now = datetime.now()
     cached_generation = _cached_result(user_id, payload_digest)
 
+    # Only an identical payload can use the cache; changed analytics needs a new report.
     if cached_generation and allow_cached_result:
         cached_response = _saved_response(cached_generation)
         cached_response['meta'] = {

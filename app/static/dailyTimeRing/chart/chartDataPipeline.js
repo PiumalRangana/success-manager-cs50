@@ -6,7 +6,8 @@
  *   time → sessions → segments → angles → SVG
  *
  * Rules:
- * - Ring is rebuilt from truth every tick
+ * - Ring is rebuilt from current session data every tick, preventing visual state drift
+ *   while an active session grows or crosses a boundary
  * - No internal state inside the ring
  * - Animation is cosmetic only
  * - Center shows "present", ring shows "history"

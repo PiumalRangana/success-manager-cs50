@@ -110,6 +110,8 @@ function buildComparison(fromStats, toStats, mode) {
         sessionsPerDay: compareValue(from.sessionsPerDay, to.sessionsPerDay)
     };
 
+    // Totals are meaningful only for equal-length periods. A shorter current
+    // period compares rates and averages instead of misleading raw totals.
     if (mode === 'full') {
         Object.assign(metrics, {
             totalFocusMinutes: compareValue(
