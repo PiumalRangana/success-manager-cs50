@@ -1,3 +1,7 @@
+// AI assistance disclosure: ChatGPT, OpenAI Codex, Google Gemini, and GitHub
+// Copilot were used throughout this project as learning and collaboration tools.
+// See the project-wide disclosure in run.py.
+
 import { fetchSessionsForDateRange, fetchCalculatedAnalytics } from './analyticsService.js';
 import {
     setAnalyticsSessions,
