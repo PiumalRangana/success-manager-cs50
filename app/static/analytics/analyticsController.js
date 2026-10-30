@@ -2,11 +2,10 @@
 // Copilot were used throughout this project as learning and collaboration tools.
 // See the project-wide disclosure in run.py.
 
-import { fetchSessionsForDateRange, fetchCalculatedAnalytics } from './analyticsService.js';
+import { fetchSessionsForDateRange } from './analyticsService.js';
 import {
     setAnalyticsSessions,
     setAnalyticsDateRange,
-    setCalculatedAnalytics,
     setAnalyticsDashboard
 } from './analyticsStore.js';
 import {
@@ -121,19 +120,14 @@ export async function applyDateRange([startDate, endDate]) {
                 { signal: controller.signal }
             )
             : Promise.resolve([]);
-        const calculatedAnalyticsPromise = fetchCalculatedAnalytics([startDate, endDate], {
-            signal: controller.signal
-        });
         const [
             selectedSessions,
             previousSessions,
-            presentSessions,
-            calculatedAnalytics
+            presentSessions
         ] = await Promise.all([
             selectedSessionsPromise,
             previousSessionsPromise,
-            presentSessionsPromise,
-            calculatedAnalyticsPromise
+            presentSessionsPromise
         ]);
 
         if (controller.signal.aborted) {
@@ -157,7 +151,6 @@ export async function applyDateRange([startDate, endDate]) {
                 : null
         });
         setAnalyticsSessions(selectedSessions);
-        setCalculatedAnalytics(calculatedAnalytics);
         setAnalyticsDashboard(dashboard);
 
         if (dashboard.periods.selected.stats.summary.totalSessions === 0) {

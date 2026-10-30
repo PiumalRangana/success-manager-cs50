@@ -54,11 +54,3 @@ export function fetchSessionsForDateRange(startDate, endDate, options = {}) {
         options
     );
 }
-
-export function fetchCalculatedAnalytics([startDate, endDate], options = {}) {
-    return fetchAnalyticsJson(
-        buildAnalyticsUrl('/api/analytics/calculated', startDate, endDate),
-        data => typeof data === 'object' && data !== null && !Array.isArray(data),
-        options
-    );
-}

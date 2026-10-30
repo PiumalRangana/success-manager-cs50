@@ -2,12 +2,10 @@ let analyticsData = {
     startDate: null,
     endDate: null,
     sessions: [],
-    calculated: null,
     dashboard: null
 };
 
 let analyticsSessionListeners = [];
-let analyticsDataListeners = [];
 let dateListeners = [];
 let dashboardListeners = [];
 
@@ -22,11 +20,6 @@ export function setAnalyticsDateRange(startDate, endDate) {
 export function setAnalyticsSessions(sessions) {
     analyticsData.sessions = sessions;
     notifySessionChanges();
-}
-
-export function setCalculatedAnalytics(calculatedAnalytics) {
-    analyticsData.calculated = calculatedAnalytics;
-    notifyAnalyticsChanges();
 }
 
 export function setAnalyticsDashboard(dashboard) {
@@ -65,14 +58,6 @@ export function subscribeToDateChanges(fn) {
   };
 }
 
-export function subscribeToAnalyticsChanges(fn) {
-  analyticsDataListeners.push(fn);
-
-  return () => {
-    analyticsDataListeners = analyticsDataListeners.filter(l => l !== fn);
-  };
-}
-
 export function subscribeToAnalyticsSessionsChanges(fn) {
   analyticsSessionListeners.push(fn);
 
@@ -93,10 +78,6 @@ export function subscribeToAnalyticsDashboardChanges(fn) {
 
 function notifyDateChanges() {
   dateListeners.forEach(fn => fn(analyticsData.startDate,analyticsData.endDate));
-}
-
-function notifyAnalyticsChanges() {
-  analyticsDataListeners.forEach(fn => fn(analyticsData.calculated));
 }
 
 function notifySessionChanges() {
