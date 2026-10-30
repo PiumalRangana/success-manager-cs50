@@ -1,7 +1,58 @@
-{% extends "base_app.html" %}
+{% extends "base_landing.html" %}
 
-{% block title %}About{% endblock %}
+{% block title %}About | Success Manager{% endblock %}
 {% block content %}
-<h1>About</h1>
-<p>This is the About page.</p>
+<section class="container py-5 text-light">
+    <header class="text-center mx-auto mb-5" style="max-width: 48rem;">
+        <h1 class="display-5 fw-bold mb-3">About Success Manager</h1>
+        <p class="lead text-light-emphasis mb-0">
+            Success Manager is an evolving productivity tool for people who want
+            to improve independently through clearer information and practical structure.
+        </p>
+    </header>
+
+    <div class="row g-4">
+        <div class="col-12 col-lg-4">
+            <article class="card h-100 bg-dark text-light border-secondary shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="h4 card-title">Purpose</h2>
+                    <p class="card-text mb-0">
+                        Success Manager is for people who want to understand their
+                        work habits and build consistency on their own. It aims to
+                        replace vague assumptions about effort with information users
+                        can reflect on and use.
+                    </p>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <article class="card h-100 bg-dark text-light border-secondary shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="h4 card-title">What It Offers Today</h2>
+                    <p class="card-text mb-0">
+                        Users can create tasks, track focused work with a timer, and
+                        turn saved sessions into charts, comparisons, and optional AI
+                        focus reports. The current application helps users see how
+                        consistently they work and how they spend time on tasks.
+                    </p>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <article class="card h-100 bg-dark text-light border-secondary shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="h4 card-title">Where It Is Going</h2>
+                    <p class="card-text mb-0">
+                        Success Manager will continue toward routines, schedules,
+                        planning, and more useful AI-supported reflection. The goal is
+                        to help users turn insight into practical day-to-day action
+                        while keeping them in control of their own progress.
+                    </p>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
 {% endblock %}
